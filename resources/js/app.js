@@ -2120,7 +2120,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Ouvrir la modale de confirmation pour TOUS les rôles
     document.querySelectorAll('.delete-member-btn').forEach(btn => {
         btn.addEventListener('click', function () {
-          
+
             const action = this.dataset.action;
             if (deleteForm) deleteForm.action = action;
 
@@ -2235,7 +2235,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let startDate = null;
     let currentDate = new Date();
 
-    // ====================== Initialisation du mois selon les paramètres URL ======================
     function initCurrentDateFromForm() {
         if (dateFinInput && dateFinInput.value) {
             const fin = new Date(dateFinInput.value);
@@ -2254,7 +2253,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     initCurrentDateFromForm();
 
-    // ===========================================================================================
 
     function createLocalDate(y, m, d) {
         return new Date(y, m, d, 0, 0, 0, 0);
@@ -2313,7 +2311,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     title: event.title,
                     start: event.start,
                     end: event.end,
-                    slug: event.slug || event.title  // slug depuis API, sinon fallback sur title
+                    slug: event.slug || event.title  
                 }]
             };
         });
@@ -2342,7 +2340,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return merged;
     }
 
-    // ====================== POPUP ======================
     window.showAvailabilityPopup = function (models, startDate, endDate) {
         const popup = document.getElementById('availability-popup');
         if (!popup) return;
@@ -2380,7 +2377,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (popup) popup.classList.remove('show');
     };
 
-    // ====================== CHARGEMENT DISPONIBILITÉS ======================
     async function loadAvailabilities(year, month) {
         const start = `${year}-${String(month + 1).padStart(2, '0')}-01`;
         const end = `${year}-${String(month + 1).padStart(2, '0')}-31`;
@@ -2396,7 +2392,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return await res.json();
     }
 
-    // ====================== RENDU CALENDRIER ======================
     async function renderCalendar(date) {
         const prevHeight = calendarBody.offsetHeight;
         calendarTable.style.transition = 'opacity 0.2s ease, height 0.2s ease';
@@ -2481,7 +2476,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 span.textContent = d;
                 cell.appendChild(span);
 
-                // Cherche les blocs fusionnés qui couvrent cette cellule
                 const cellMergedBlocks = mergedBlocks.filter(merged =>
                     cellDate >= merged.start && cellDate <= merged.end
                 );
@@ -2496,7 +2490,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     bar.classList.add('availability-bar');
                     bar.style.backgroundColor = 'rgba(34, 139, 34, 0.25)';
 
-                    // Texte UNIQUEMENT sur la cellule de départ, centré et bold (via CSS)
                     if (cellDate.getTime() === startTime) {
                         bar.textContent = numModels === 1
                             ? merged.models[0].title
@@ -2578,7 +2571,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 50);
     }
 
-    // ====================== RÉINITIALISER ======================
     resetIcon.addEventListener('click', () => {
         if (dateDebutInput) dateDebutInput.value = '';
         if (dateFinInput) dateFinInput.value = '';
@@ -2586,7 +2578,6 @@ document.addEventListener('DOMContentLoaded', function () {
         renderCalendar(currentDate);
     });
 
-    // ====================== NAVIGATION ======================
     document.getElementById('prev-btn').addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() - 1);
         renderCalendar(currentDate);
@@ -2602,7 +2593,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (dateDebutInput) dateDebutInput.addEventListener('change', () => renderCalendar(currentDate));
     if (dateFinInput) dateFinInput.addEventListener('change', () => renderCalendar(currentDate));
 
-    // ====================== VALIDATION FORMULAIRE ======================
     form.addEventListener('submit', function (e) {
         if (!dateDebutInput?.value || !dateFinInput?.value) {
             e.preventDefault();
@@ -2652,6 +2642,76 @@ document.addEventListener('DOMContentLoaded', function () {
     renderCalendar(currentDate);
 });
 
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const deleteModal = document.getElementById('delete-confirm-modal');
+    const unauthorizedModal = document.getElementById('unauthorized-modal-demande');
+
+    if (!deleteModal || !unauthorizedModal) return;
+
+    const modalContent = deleteModal.querySelector('.alert-dialog-content');
+    const deleteForm = document.getElementById('delete-form');
+    const closeButtons = deleteModal.querySelectorAll('.close-dialog-btn');
+    const unauthorizedContent = unauthorizedModal.querySelector('.unauthorized-content-demande');
+
+    const userRole = deleteModal.dataset.userRole;   
+
+    function openUnauthorizedModal() {
+        unauthorizedModal.classList.remove('hidden');
+        unauthorizedModal.classList.add('flex');
+        setTimeout(() => unauthorizedContent.classList.remove('opacity-0', 'translate-y-20'), 10);
+    }
+
+    function closeUnauthorizedModal() {
+        unauthorizedContent.classList.add('opacity-0', 'translate-y-20');
+        setTimeout(() => {
+            unauthorizedModal.classList.add('hidden');
+            unauthorizedModal.classList.remove('flex');
+        }, 300);
+    }
+
+    unauthorizedModal.querySelectorAll('.close-unauthorized-demande').forEach(btn => {
+        btn.addEventListener('click', closeUnauthorizedModal);
+    });
+
+    document.querySelectorAll('.delete-demande-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const url = this.getAttribute('data-url');
+            if (deleteForm) deleteForm.action = url;
+
+            deleteModal.classList.remove('hidden');
+            deleteModal.classList.add('flex');
+            setTimeout(() => modalContent.classList.remove('opacity-0', 'translate-y-20'), 10);
+        });
+    });
+
+    closeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            modalContent.classList.add('opacity-0', 'translate-y-20');
+            setTimeout(() => {
+                deleteModal.classList.add('hidden');
+                deleteModal.classList.remove('flex');
+            }, 300);
+        });
+    });
+
+    if (deleteForm) {
+        deleteForm.addEventListener('submit', function (e) {
+            if (userRole === 'bookeuse') {
+                e.preventDefault();
+
+                modalContent.classList.add('opacity-0', 'translate-y-20');
+                setTimeout(() => {
+                    deleteModal.classList.add('hidden');
+                    deleteModal.classList.remove('flex');
+
+                    openUnauthorizedModal();
+                }, 300);
+            }
+        });
+    }
+});
 
 
 

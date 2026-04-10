@@ -1,3 +1,19 @@
+@php
+$roleMapping = [
+    'accueillant' => 'Accueillant',
+    'admin'       => 'Admin',
+    'bookeuse'    => 'Bookeuse',
+    'coach'       => 'Coach sportif',
+    'dieteticien' => 'Diététicien',
+    'jury'        => 'Jury',
+    'styliste'    => 'Mensurations/styliste',
+    'osteopathe'  => 'Ostéopathe',
+    'photographe' => 'Photographe',
+    'psychologue' => 'Psychologue',
+];
+@endphp
+
+
 <body data-authenticated="{{ auth()->check() ? '1' : '0' }}">
     <div class="sidebar flex xl:col-span-3 2xl:col-span-2 bg-primary sideTextParent transition-transform duration-200
     @auth
@@ -240,7 +256,102 @@
                         </span>
                     </summary>
 
+                
                     <ul class="mt-2 space-y-1 px-4">
+                        {{-- Filtrer par rôle - Dropdown --}}
+                        @can('is-admin')
+                        <li class="relative">
+
+                            <details class="group">
+
+                            
+                            <summary
+                                    class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-main/60 hover:bg-primary-dark/70 hover:text-main cursor-pointer list-none transition">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="size-4 stroke-main"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+                                    </svg>
+
+                                    <span class="text-main/60 group-hover:text-main">
+                                        Filtrer
+                                    </span>
+                                </summary>
+                            
+
+                                <!-- DROPDOWN -->
+                                <div class="absolute left-0 top-full mt-2 z-[9999] w-[320px]
+                                    opacity-0 scale-95 transition-all duration-200
+                                    group-open:opacity-100 group-open:scale-100">
+
+                                    <form method="GET" action="{{ route('members.filter') }}"
+                                        class="bg-primary-light border border-c-border rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+
+                                        <div class="p-4 overflow-y-auto max-h-[180px]">
+                                            <strong class="block pb-3 text-xs font-medium uppercase opacity-65">
+                                                RÔLE
+                                            </strong>
+
+                                            @foreach($roleMapping as $key => $displayName)
+                                            <label class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer
+                                                        hover:bg-primary transition
+                                                        has-[:checked]:bg-primary-dark">
+
+                                                <input type="radio"
+                                                    name="role"
+                                                    value="{{ $key }}"
+                                                    class="hidden peer"
+                                                    {{ request('role') === $key ? 'checked' : '' }} />
+
+                                                <span class="text-sm text-primary-300 peer-checked:text-main">
+                                                    {{ $displayName }}
+                                                </span>
+                                            </label>
+                                            @endforeach
+                                        </div>
+
+                                        <!-- FOOTER -->
+                                        <div class="sticky bottom-0 flex gap-2 p-4 border-t border-c-border bg-primary-light">
+
+                                            <button type="submit"
+                                                class="flex-1 bg-main hover:bg-main-dark text-primary text-sm font-medium py-3 rounded-xl">
+                                                Appliquer
+                                            </button>
+
+                                            <a href="{{ route('dashboard.members') }}"
+                                                class="p-2 hover:bg-main/10 flex items-center justify-center rounded-xl transition">
+
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-5 stroke-main-dark">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7
+                                                        48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7
+                                                        c-.017.22-.032.441-.046.662
+                                                        M19.5 12l3-3m-3 3-3-3
+                                                        m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7
+                                                        48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7
+                                                        c.017-.22.032-.441.046-.662
+                                                        M4.5 12l3 3m-3-3-3 3" />
+                                                </svg>
+                                            </a>
+
+                                        </div>
+
+                                    </form>
+                                </div>
+
+                            </details>
+
+                        </li>
+                        @endcan
+
                         <li>
                             <a
                                 href="{{ route('dashboard.members') }}"
@@ -275,6 +386,14 @@
                             href="{{ route('calendar.view') }}"
                             class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-main/60 hover:bg-primary-dark/70 hover:text-main">
                             Calendrier
+                        </a>
+                    </li>
+
+                      <li>
+                        <a
+                            href="#"
+                            class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-main/60 hover:bg-primary-dark/70 hover:text-main">
+                            Newsletters
                         </a>
                     </li>
                     </ul>

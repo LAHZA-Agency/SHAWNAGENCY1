@@ -27,12 +27,10 @@ public function view(Request $request)
     $ids = $demandes->pluck('id');
 
     if (auth()->user()->role === 'admin') {
-        // Admin voit → marquer seen_by_admin = 1 SEULEMENT, ne pas toucher status
         Demande::whereIn('id', $ids)
             ->where('seen_by_admin', 0)
             ->update(['seen_by_admin' => 1]);
     } else {
-        // bookeuse voit → marquer status = 1 SEULEMENT, ne pas toucher seen_by_admin
         Demande::whereIn('id', $ids)
             ->where('status', 0)
             ->update(['status' => 1]);
@@ -40,10 +38,44 @@ public function view(Request $request)
 
     return view('demandes.view', compact('demandes'));
 }
-    public function destroy($id)
+  public function destroy($id)
 {
     $demande = Demande::findOrFail($id);
-    $demande->delete();
-    return redirect()->route('demandes.view')->with('success', 'Demande supprimée avec succès.');
+
+    // Protection : seul l'admin peut supprimer une demande
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'error' => 'Vous n\'avez pas l\'autorisation de supprimer cette demande.'
+            ], 403);
+        }
+
+        return redirect()->route('demandes.view')
+                         ->withErrors(['error' => 'Action non autorisée. Seul l\'administrateur peut supprimer une demande.']);
+    }
+
+    try {
+        $demande->delete();
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Demande supprimée avec succès.'
+            ]);
+        }
+
+        return redirect()->route('demandes.view')
+                         ->with('success', 'Demande supprimée avec succès.');
+    } 
+    catch (\Exception $e) {
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'error' => 'Erreur lors de la suppression : ' . $e->getMessage()
+            ], 500);
+        }
+
+        return redirect()->route('demandes.view')
+                         ->withErrors(['error' => 'Erreur lors de la suppression de la demande.']);
+    }
 }
 }

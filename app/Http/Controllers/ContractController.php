@@ -16,7 +16,7 @@ class ContractController extends Controller
     public function store(Request $request, $candidateId)
     {
     $candidate = MannequinCandidate::findOrFail($candidateId);
-    // ==================== BLOQUAGE BOOKEUSE ====================
+
     if (auth()->user()->role === 'bookeuse') {
         $admin = User::where('role', 'admin')->first();
         if (!$admin) {
@@ -27,7 +27,7 @@ class ContractController extends Controller
             'contract' => 'required|mimes:pdf|max:5120'
         ]);
 
-        // Stocker temporairement le fichier
+       
         $contractPath = $request->file('contract')->store("temp/contracts", 'public');
 
         $code = rand(100000, 999999);
@@ -62,7 +62,6 @@ class ContractController extends Controller
 
             $candidate = MannequinCandidate::findOrFail($candidateId);
 
-            // Delete old contract if exists
             if ($candidate->contract) {
                 Storage::disk('public')->delete($candidate->contract->contract_url);
                 $candidate->contract->delete();
@@ -107,7 +106,7 @@ class ContractController extends Controller
     {
         try {
             // Check if user is admin
-            if (!Auth::check() || !in_array(Auth::user()->role, ['jury', 'admin'])) {
+            if (!Auth::check() || !in_array(Auth::user()->role, ['jury', 'admin','bookeuse'])) {
                 return redirect()->route('mainviews.forbidden');
             }
 

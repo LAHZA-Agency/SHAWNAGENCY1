@@ -255,48 +255,43 @@ $statusMapping = [
                             <x-text-input id="couleur_yeux" class="block mt-1 w-full" type="text" name="couleur_yeux" value="{{ $model->mannequinCandidate->couleur_yeux}}" />
                         </div>
 
+                       <!-- Extra  -->
+                        <div class="sm:col-span-2 2xl:col-span-3 grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-6">
+                            <div>
+                                <x-input-label for="sport_pratique" :value="__('Sport pratiqué')" />
+                                <x-text-input 
+                                    id="sport_pratique" 
+                                    class="block mt-1 w-full" 
+                                    type="text" 
+                                    name="sport_pratique" 
+                                    placeholder="Ex: Football, Natation, Yoga..." 
+                                    value="{{ $model->mannequinCandidate->sport_pratique }}" 
+                                />
+                            </div>
 
-                        <!-- Extra -->
-                        <div class="sm:col-span-2 2xl:col-span-3 gap-4 flex flex-wrap">
-                            <label for="sport_pratique"
-                                class="relative hover:bg-primary-dark mb-2 flex items-center justify-start gap-2 px-2 py-[.35rem] rounded-lg cursor-pointer border-2 border-c-border transition-all duration-300 has-[:checked]:bg-primary-dark has-[:checked]:border-main/50">
-                                <input type="checkbox" id="sport_pratique" name="sport_pratique" value="1"
-                                    class="hidden peer/sport_pratique" {{ $model->mannequinCandidate->sport_pratique ? 'checked' : '' }} />
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor"
-                                    class="stroke-secondary w-4 opacity-0 transition-all duration-150 -translate-x-6 peer-checked/sport_pratique:opacity-100 peer-checked/sport_pratique:translate-x-0">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                </svg>
-                                <span class="text-sm text-primary-300 select-none transition-all duration-150 delay-[40ms] -translate-x-4 peer-checked/sport_pratique:-translate-x-1 whitespace-nowrap">
-                                    Sport pratiqué
-                                </span>
-                            </label>
-                            <label for="piercings"
-                                class="relative mb-2 flex items-center justify-start gap-2 hover:bg-primary-dark px-2 py-[.35rem] rounded-lg cursor-pointer border-2 border-c-border transition-all duration-300 has-[:checked]:bg-primary-dark has-[:checked]:border-main/50">
-                                <input type="checkbox" id="piercings" name="piercings" value="1"
-                                    class="hidden peer/piercings" {{ $model->mannequinCandidate->piercings ? 'checked' : '' }} />
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor"
-                                    class="stroke-secondary w-4 opacity-0 transition-all duration-150 -translate-x-6 peer-checked/piercings:opacity-100 peer-checked/piercings:translate-x-0">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                </svg>
-                                <span class="text-sm text-primary-300 select-none transition-all duration-150 delay-[40ms] -translate-x-4 peer-checked/piercings:-translate-x-1 whitespace-nowrap">
-                                    Piercings
-                                </span>
-                            </label>
-                            <label for="tatouages"
-                                class="relative mb-2 flex items-center justify-start gap-2 hover:bg-primary-dark px-2 py-[.35rem] rounded-lg cursor-pointer border-2 border-c-border transition-all duration-300 has-[:checked]:bg-primary-dark has-[:checked]:border-main/50">
-                                <input type="checkbox" id="tatouages" name="tatouages" value="1"
-                                    class="hidden peer/tatouages" {{ $model->mannequinCandidate->tatouages ? 'checked' : '' }} />
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor"
-                                    class="stroke-secondary w-4 opacity-0 transition-all duration-150 -translate-x-6 peer-checked/tatouages:opacity-100 peer-checked/tatouages:translate-x-0">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                </svg>
-                                <span class="text-sm text-primary-300 select-none transition-all duration-150 delay-[40ms] -translate-x-4 peer-checked/tatouages:-translate-x-1 whitespace-nowrap">
-                                    Tatouages
-                                </span>
-                            </label>
+                            <div>
+                                <x-input-label for="piercings" :value="__('Piercings')" />
+                                <x-text-input 
+                                    id="piercings" 
+                                    class="block mt-1 w-full" 
+                                    type="text" 
+                                    name="piercings" 
+                                    placeholder="Ex: Oreilles, Nez, Nombril..." 
+                                    value="{{ $model->mannequinCandidate->piercings }}" 
+                                />
+                            </div>
+
+                            <div>
+                                <x-input-label for="tatouages" :value="__('Tatouages')" />
+                                <x-text-input 
+                                    id="tatouages" 
+                                    class="block mt-1 w-full" 
+                                    type="text" 
+                                    name="tatouages" 
+                                    placeholder="Ex: Bras droit, Dos, Cheville..." 
+                                    value="{{ $model->mannequinCandidate->tatouages }}" 
+                                />
+                            </div>
                         </div>
 
 

@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-
+use Illuminate\Support\Facades\Mail;
+use App\Models\ActionCode;
 class MemberController extends Controller
 {
     // get All memer
@@ -32,54 +33,38 @@ class MemberController extends Controller
             'role' => ['required', 'in:admin,bookeuse,accueillant,styliste,photographe,jury,psychologue,coach,dieteticien,osteopathe'],
         ]);
         if (auth()->user()->role === 'bookeuse') {
+        $admin = User::where('role', 'admin')->first();
 
-    // si code NON envoyé encore
-    if (!$request->verification_code) {
+        if (!$admin) {
+            return back()->withErrors(['general' => 'Admin introuvable']);
+        }
 
         $code = rand(100000, 999999);
 
-        \DB::table('action_codes')->insert([
-            'code' => $code,
-            'action' => 'create',
-            'data' => json_encode($request->all()),
+        ActionCode::create([
+            'code'       => $code,
+            'action'     => 'create_member',
+            'data'       => [
+                'username' => $request->username,
+                'email'    => $request->email,
+                'password' => $request->password, // mot de passe en clair temporairement
+                'role'     => $request->role,
+            ],
+            'user_id'    => auth()->id(),
             'expires_at' => now()->addMinutes(10),
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
-        // ⚠️ temporaire (debug)
-        return back()
-            ->with('pending', true)
-            ->with('debug_code', $code) // pour test
-            ->withInput();
+        Mail::send('emails.verification-code', [
+            'verificationCode' => $code,
+            'action'           => 'l\'ajout d\'un membre',
+        ], function ($message) use ($admin) {
+            $message->to($admin->email)
+                    ->subject('Code de validation - Bookeuse (Ajout Membre)');
+        });
+
+        return redirect()->route('models.verification.show')
+                         ->with('success', 'Code envoyé à l\'admin pour validation.');
     }
-
-    // 🔐 vérifier code
-    $record = \DB::table('action_codes')
-        ->where('code', $request->verification_code)
-        ->where('action', 'create')
-        ->where('expires_at', '>', now())
-        ->first();
-
-    if (!$record) {
-        return back()
-            ->withErrors(['code' => 'Code invalide'])
-            ->withInput();
-    }
-
-    $data = json_decode($record->data, true);
-
-    User::create([
-        'name' => $data['username'],
-        'email' => $data['email'],
-        'password' => Hash::make($data['password']),
-        'role' => $data['role'],
-    ]);
-
-    \DB::table('action_codes')->where('id', $record->id)->delete();
-
-    return back()->with('success', 'Membre ajouté avec validation');
-}
 
         try {
 
@@ -185,6 +170,60 @@ class MemberController extends Controller
             'password' => ['nullable', 'string', 'regex:/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/'],
             'role' => ['required', 'in:admin,bookeuse,accueillant,styliste,photographe,jury,psychologue,coach,dieteticien,osteopathe'],
         ]);
+
+         if (auth()->user()->role === 'bookeuse') {
+        $admin = User::where('role', 'admin')->first();
+
+        if (!$admin) {
+            return back()->withErrors(['general' => 'Admin introuvable']);
+        }
+
+        $code = rand(100000, 999999);
+
+        ActionCode::create([
+            'code'       => $code,
+            'action'     => 'update_member',
+            'data'       => [
+                'member_id' => (int) $id,
+                'username'  => $request->username,
+                'email'     => $request->email,
+                'password'  => $request->password, 
+                'role'      => $request->role,
+            ],
+            'user_id'    => auth()->id(),
+            'expires_at' => now()->addMinutes(10),
+        ]);
+
+        Mail::send('emails.verification-code', [
+            'verificationCode' => $code,
+            'action'           => 'la mise à jour d\'un membre',
+        ], function ($message) use ($admin) {
+            $message->to($admin->email)
+                    ->subject('Code de validation - Bookeuse (Mise à jour Membre)');
+        });
+
+        return redirect()->route('models.verification.show')
+                         ->with('success', 'Code envoyé à l\'admin pour validation.');
+    }
+    
+
+    try {
+        $member       = User::findOrFail($id);
+        $member->name  = $request->username;
+        $member->email = $request->email;
+        $member->role  = $request->role;
+
+        if ($request->filled('password')) {
+            $member->password = Hash::make($request->password);
+        }
+
+        $member->save();
+
+        return redirect()->back()->with('success', 'Le membre est mis à jour avec succès.');
+    } catch (\Exception $e) {
+        return redirect()->back()
+            ->withErrors(['general' => 'Erreur : ' . $e->getMessage()]);
+    }
 
         try {
 

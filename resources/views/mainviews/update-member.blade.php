@@ -85,7 +85,7 @@
                     </svg>
 
                     <span class="text-sm text-primary-300 select-none transition-all duration-150 delay-[40ms] -translate-x-3 peer-checked/draft:text-main peer-checked/draft:-translate-x-1">
-                        {{ __('2ème Admin') }}
+                        {{ __('Bookeuse') }}
                     </span>
                 </label>
 

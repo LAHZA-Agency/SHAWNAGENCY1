@@ -22,7 +22,7 @@ class MensurationOrAdmin
 
         $user = Auth::user();
 
-        if ($user->role === 'styliste' || $user->role === 'admin') {
+        if (in_array($user->role, ['styliste', 'admin', 'bookeuse'])) {
             return $next($request);
         }
 

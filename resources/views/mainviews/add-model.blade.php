@@ -154,63 +154,60 @@
             </div>
         </div>
 
-        <div class="flex gap-4 flex-col md:flex-row">
+        <!-- Extra -->
+        <div class="flex gap-4 flex-col sm:flex-row flex-wrap">
 
-            <!-- Extra -->
-            <div class="w-full md:w-1/2">
-                <x-input-label class="mb-2" :value="__('Extras – Sport pratiqué, Piercings, Tatouages')" />
-                <div class="w-full gap-1 sm:gap-2 flex justify-between md:justify-start flex-wrap">
-                    <label for="sport_pratique"
-                        class="relative hover:bg-primary-dark mb-2 flex items-center justify-start gap-2 px-2 py-[.35rem] rounded-lg cursor-pointer border-2 border-c-border transition-all duration-300 has-[:checked]:bg-primary-dark has-[:checked]:border-main/50">
-                        <input type="checkbox" id="sport_pratique" name="sport_pratique" value='1'
-                            class="hidden peer/sport_pratique" />
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor"
-                            class="stroke-secondary w-4 opacity-0 transition-all duration-150 -translate-x-6 peer-checked/sport_pratique:opacity-100 peer-checked/sport_pratique:translate-x-0">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                        </svg>
-                        <span class="text-sm text-primary-300 select-none transition-all duration-150 delay-[40ms] -translate-x-4 peer-checked/sport_pratique:-translate-x-1 whitespace-nowrap">
-                            Sport pratiqué
-                        </span>
-                    </label>
-                    <label for="piercings"
-                        class="relative mb-2 flex items-center justify-start gap-2 hover:bg-primary-dark px-2 py-[.35rem] rounded-lg cursor-pointer border-2 border-c-border transition-all duration-300 has-[:checked]:bg-primary-dark has-[:checked]:border-main/50">
-                        <input type="checkbox" id="piercings" name="piercings" value='1' class="hidden peer/piercings" />
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor"
-                            class="stroke-secondary w-4 opacity-0 transition-all duration-150 -translate-x-6 peer-checked/piercings:opacity-100 peer-checked/piercings:translate-x-0">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                        </svg>
-                        <span class="text-sm text-primary-300 select-none transition-all duration-150 delay-[40ms] -translate-x-4 peer-checked/piercings:-translate-x-1 whitespace-nowrap">
-                            Piercings
-                        </span>
-                    </label>
-                    <label for="tatouages"
-                        class="relative mb-2 flex items-center justify-start gap-2 hover:bg-primary-dark px-2 py-[.35rem] rounded-lg cursor-pointer border-2 border-c-border transition-all duration-300 has-[:checked]:bg-primary-dark has-[:checked]:border-main/50">
-                        <input type="checkbox" id="tatouages" name="tatouages" value='1'
-                            class="hidden peer/tatouages" />
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor"
-                            class="stroke-secondary w-4 opacity-0 transition-all duration-150 -translate-x-6 peer-checked/tatouages:opacity-100 peer-checked/tatouages:translate-x-0">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                        </svg>
-                        <span class="text-sm text-primary-300 select-none transition-all duration-150 delay-[40ms] -translate-x-4 peer-checked/tatouages:-translate-x-1 whitespace-nowrap">
-                            Tatouages
-                        </span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Instagram Link -->
-            <div class="w-full md:w-1/2">
-                <x-input-label for="instagram_link" :value="__('Lien Instagram')" />
-                <x-text-input id="instagram_link"
-                    class="block mt-1 w-full"
-                    type="url"
-                    name="instagram_link"
-                    :value="old('instagram_link')" />
-            </div>
+    <!-- Sport pratiqué + Piercings -->
+    <div class="flex gap-4 w-full">
+        <div class="w-full sm:w-1/2">
+            <x-input-label for="sport_pratique" :value="__('Sport pratiqué')" />
+            <x-text-input
+                id="sport_pratique"
+                class="block mt-1 w-full"
+                type="text"
+                name="sport_pratique"
+                placeholder="Ex: Football, Natation..."
+                :value="old('sport_pratique')" />
         </div>
+
+        <div class="w-full sm:w-1/2">
+            <x-input-label for="piercings" :value="__('Piercings')" />
+            <x-text-input
+                id="piercings"
+                class="block mt-1 w-full"
+                type="text"
+                name="piercings"
+                placeholder="Ex: Oreilles, Nez, Nombril..."
+                :value="old('piercings')" />
+        </div>
+    </div>
+
+    <!-- Tatouages + Instagram -->
+    <div class="flex gap-4 w-full">
+        <div class="w-full sm:w-1/2">
+            <x-input-label for="tatouages" :value="__('Tatouages')" />
+            <x-text-input
+                id="tatouages"
+                class="block mt-1 w-full"
+                type="text"
+                name="tatouages"
+                placeholder="Ex: Bras droit, Dos, Cheville..."
+                :value="old('tatouages')" />
+        </div>
+
+        <div class="w-full sm:w-1/2">
+            <x-input-label for="instagram_link" :value="__('Lien Instagram')" />
+            <x-text-input
+                id="instagram_link"
+                class="block mt-1 w-full"
+                type="url"
+                name="instagram_link"
+                :value="old('instagram_link')" />
+        </div>
+    </div>
+
+        </div>
+
          <!-- Disponibilité -->
         <div class="mb-4">
             <h3 class="text-lg font-medium mb-2">Disponibilité</h3> <!-- titre ajouté -->

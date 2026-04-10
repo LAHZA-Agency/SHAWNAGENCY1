@@ -1,15 +1,5 @@
 @php
-$roleMapping = [
-'accueillant' => 'Accueillant',
-'admin' => 'Admin',
-'coach' => 'Coach sportif',
-'dieteticien' => 'Diététicien',
-'jury' => 'Jury',
-'styliste' => 'Mensurations/styliste',
-'osteopathe' => 'Ostéopathe',
-'photographe' => 'Photographe',
-'psychologue' => 'Psychologue',
-];
+
 @endphp
 <nav x-data="{ open: false }" class="bg-primary border-b border-c-border absolute inset-0 z-[999] h-min">
     <!-- primary-100 Navigation Menu -->
@@ -27,23 +17,7 @@ $roleMapping = [
 
             <div class="flex justify-end gap-2 items-center whitespace-nowrap max-w-full w-full pl-16">
 
-                <!-- Roles link -->
-                @can('is-admin')
-                <div class="overflow-x-scroll no-scrollbar max-w-full w-full text-end -mb-2 lg:ml-16 xl:ml-auto">
-                    @foreach($roleMapping as $key => $displayName)
-                    <form method="GET" action="{{ route('members.filter') }}" class="inline-block">
-                        <input type="hidden"
-                            name="role[]"
-                            value="{{ $key }}"
-                            class="hidden"
-                            {{ in_array($key, request('role', [])) ? 'checked' : '' }} />
-                        <button type="submit" class="border-c-border border rounded-md px-4 py-2 leading-4 text-xs lg:text-sm uppercase tracking-tighter focus:relative text-main hover:bg-primary-dark/50">
-                            {{ $displayName }}
-                        </button>
-                    </form>
-                    @endforeach
-                </div>
-                @endcan
+               
 
 
                 <!-- Dark Mode toggle switch -->

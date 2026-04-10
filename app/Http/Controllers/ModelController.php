@@ -149,35 +149,36 @@ class ModelController extends Controller
    public function store(Request $request)
 {
     // Validation
-   $validatedData = $request->validate([
-        'username' => ['required', 'string', 'max:255', 'regex:/^[a-zA-ZÀ-ÿ\s\'\-]+$/'],
-        'email' => ['required', 'string', 'unique:users,email', 'max:255', 'regex:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/'],
-        'password' => ['required', 'string', 'regex:/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/'],
-        'profile' => 'nullable|image|mimes:jpeg,png,jpg,webp,tiff,raw,dng|max:1536',
-        'tel' => ['required', 'string', 'regex:/^[0-9+]+$/', 'max:15'],
-        'identity_document' => 'required|mimes:jpeg,png,jpg,webp,tiff,raw,dng,pdf|max:1536',
-        'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,tiff,raw,dng|max:1536',
-        'gender_identity' => ['required', 'in:Femme,Homme'],
-        'langues_parlees' => ['nullable', 'string', 'max:255'],
-        'couleur_cheveux' => ['nullable', 'string', 'max:255'],
-        'couleur_yeux' => ['nullable', 'string', 'max:255'],
-        'sport_pratique' => ['nullable', 'boolean'],
-        'piercings' => ['nullable', 'boolean'],
-        'tatouages' => ['nullable', 'boolean'],
-        'instagram_link' => 'nullable|url|max:255',
-        'model_type' => 'required|in:Model,Mannequin',
+    $validatedData = $request->validate([
+        'username'            => ['required', 'string', 'max:255', 'regex:/^[a-zA-ZÀ-ÿ\s\'\-]+$/'],
+        'email'               => ['required', 'string', 'unique:users,email', 'max:255', 'regex:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/'],
+        'password'            => ['required', 'string', 'regex:/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/'],
+        'profile'             => 'nullable|image|mimes:jpeg,png,jpg,webp,tiff,raw,dng|max:1536',
+        'tel'                 => ['required', 'string', 'regex:/^[0-9+]+$/', 'max:15'],
+        'identity_document'   => 'required|mimes:jpeg,png,jpg,webp,tiff,raw,dng,pdf|max:1536',
+        'images.*'            => 'nullable|image|mimes:jpeg,png,jpg,webp,tiff,raw,dng|max:1536',
+        'gender_identity'     => ['required', 'in:Femme,Homme'],
+        'langues_parlees'     => ['nullable', 'string', 'max:255'],
+        'couleur_cheveux'     => ['nullable', 'string', 'max:255'],
+        'couleur_yeux'        => ['nullable', 'string', 'max:255'],
+        'sport_pratique'      => ['nullable', 'string', 'max:255'],
+        'piercings'           => ['nullable', 'string', 'max:255'],
+        'tatouages'           => ['nullable', 'string', 'max:255'],
+        'instagram_link'      => 'nullable|url|max:255',
+        'model_type'          => 'required|in:Model,Mannequin',
         'disponibilite_debut' => 'required|date',
-        'disponibilite_fin' => 'required|date|after_or_equal:disponibilite_debut',
+        'disponibilite_fin'   => 'required|date|after_or_equal:disponibilite_debut',
     ]);
 
-    if (auth()->user()->role === 'bookeuse') {
+    // ====================== CAS BOOKEEUSE ======================
+    if (auth()->check() && auth()->user()->role === 'bookeuse') {
+        
         $admin = User::where('role', 'admin')->first();
 
         if (!$admin) {
             return back()->withErrors(['general' => 'Admin introuvable']);
         }
 
-        // ✅ CORRECTION : stocker les fichiers ici avant de créer l'ActionCode
         $profilePath = null;
         if ($request->hasFile('profile')) {
             $profilePath = $request->file('profile')->store("temp/profiles", 'public');
@@ -193,7 +194,6 @@ class ModelController extends Controller
         ActionCode::create([
             'code'       => $code,
             'action'     => 'create_candidate',
-            // On retire les clés fichiers de $validatedData et on met les chemins stockés
             'data'       => array_merge(
                 collect($validatedData)->except(['profile', 'identity_document', 'images'])->toArray(),
                 [
@@ -216,6 +216,7 @@ class ModelController extends Controller
             ->with('success', 'Code envoyé à l\'admin');
     }
 
+   // ====================== CAS NORMAL (inscription publique) ======================
     try {
         $user = User::create([
             'name'     => $validatedData['username'],
@@ -228,8 +229,8 @@ class ModelController extends Controller
         $user->slug = $user->generateUniqueSlug();
         $user->save();
 
-        $profilePath = $request->hasFile('profile') 
-            ? $request->file('profile')->store("models/{$user->id}/profile", 'public') 
+        $profilePath = $request->hasFile('profile')
+            ? $request->file('profile')->store("models/{$user->id}/profile", 'public')
             : null;
 
         $identityDocumentPath = $request->file('identity_document')
@@ -246,9 +247,9 @@ class ModelController extends Controller
             'langues_parlees'      => $validatedData['langues_parlees'],
             'couleur_cheveux'      => $validatedData['couleur_cheveux'],
             'couleur_yeux'         => $validatedData['couleur_yeux'],
-            'sport_pratique'       => $validatedData['sport_pratique'] ?? false,
-            'piercings'            => $validatedData['piercings'] ?? false,
-            'tatouages'            => $validatedData['tatouages'] ?? false,
+            'sport_pratique'       => $validatedData['sport_pratique'] ?? null,
+            'piercings'            => $validatedData['piercings'] ?? null,
+            'tatouages'            => $validatedData['tatouages'] ?? null,
             'instagram_link'       => $validatedData['instagram_link'],
             'model_type'           => $validatedData['model_type'],
             'disponibilite_debut'  => $validatedData['disponibilite_debut'],
@@ -258,7 +259,6 @@ class ModelController extends Controller
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $imagePath = $image->store("models/{$user->id}/additional_images", 'public');
-
                 MannequinImage::create([
                     'user_id'      => $user->id,
                     'candidate_id' => $candidate->id,
@@ -267,10 +267,15 @@ class ModelController extends Controller
             }
         }
 
-        return redirect()->route('dashboard')->with('success', 'Le mannequin a été ajouté avec succès.');
+        Auth::login($user);
+
+        // Redirection vers son propre profil (avec son slug)
+        return redirect()->route('model.view', $user->slug)
+            ->with('success', 'Votre compte a été créé avec succès !');
 
     } catch (\Exception $e) {
-        return redirect()->back()->withErrors(['general' => 'Erreur lors de la création: ' . $e->getMessage()]);
+        Log::error('Erreur création candidat : ' . $e->getMessage());
+        return redirect()->back()->withErrors(['general' => 'Erreur lors de la création : ' . $e->getMessage()]);
     }
 }
 
@@ -325,7 +330,7 @@ class ModelController extends Controller
         DB::rollBack();
         return redirect()->back()->withErrors(['error' => 'Erreur lors de la suppression du mannequin: ' . $e->getMessage()]);
     }
-}
+    }
 
 
     public function edit($id)
@@ -793,34 +798,34 @@ class ModelController extends Controller
     return redirect()->route('model.view', $model->name)
                      ->with('success', 'Votre message a été envoyé avec succès !')
                      ->with('demandes', $demandes);
-}
+    }
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-    $candidate = $user->mannequinCandidate;
+        $candidate = $user->mannequinCandidate;
 
-    $validatedData = $request->validate([
-        'username' => ['required', 'string', 'max:255', 'regex:/^[a-zA-ZÀ-ÿ\s\'\-]+$/'],
-        'email' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/', Rule::unique('users')->ignore($user->id)],
-        'password' => ['nullable', 'string', 'regex:/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/'],
-        'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,webp,tiff,raw,dng|max:1536',
-        'tel' => ['required', 'string', 'regex:/^[0-9+]+$/', 'max:15'],
-        'identity_document' => 'nullable|mimes:jpeg,png,jpg,webp,tiff,raw,dng,pdf|max:1536',
-        'gender_identity' => ['required', 'in:Femme,Homme'],
-        'status_model' => ['required', 'in:pending,approved,rejected'],
-        'langues_parlees' => ['nullable', 'string', 'max:255'],
-        'couleur_cheveux' => ['nullable', 'string', 'max:255'],
-        'couleur_yeux' => ['nullable', 'string', 'max:255'],
-        'sport_pratique' => ['nullable', 'boolean'],
-        'piercings' => ['nullable', 'boolean'],
-        'tatouages' => ['nullable', 'boolean'],
-        'instagram_link' => 'nullable|url|max:255',
-        'model_type' => 'required|in:Model,Mannequin',
-        'disponibilite_debut' => 'required|date',
-        'disponibilite_fin' => 'required|date|after_or_equal:disponibilite_debut',
-    ]);
+        $validatedData = $request->validate([
+            'username' => ['required', 'string', 'max:255', 'regex:/^[a-zA-ZÀ-ÿ\s\'\-]+$/'],
+            'email' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/', Rule::unique('users')->ignore($user->id)],
+            'password' => ['nullable', 'string', 'regex:/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/'],
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,webp,tiff,raw,dng|max:1536',
+            'tel' => ['required', 'string', 'regex:/^[0-9+]+$/', 'max:15'],
+            'identity_document' => 'nullable|mimes:jpeg,png,jpg,webp,tiff,raw,dng,pdf|max:1536',
+            'gender_identity' => ['required', 'in:Femme,Homme'],
+            'status_model' => ['required', 'in:pending,approved,rejected'],
+            'langues_parlees' => ['nullable', 'string', 'max:255'],
+            'couleur_cheveux' => ['nullable', 'string', 'max:255'],
+            'couleur_yeux' => ['nullable', 'string', 'max:255'],
+            'sport_pratique' => ['nullable', 'string', 'max:255'],
+            'piercings'      => ['nullable', 'string', 'max:255'],
+            'tatouages'      => ['nullable', 'string', 'max:255'],
+            'instagram_link' => 'nullable|url|max:255',
+            'model_type' => 'required|in:Model,Mannequin',
+            'disponibilite_debut' => 'required|date',
+            'disponibilite_fin' => 'required|date|after_or_equal:disponibilite_debut',
+        ]);
 
-    if (auth()->user()->role === 'bookeuse') {
+        if (auth()->user()->role === 'bookeuse') {
         $admin = User::where('role', 'admin')->first();
 
         if (!$admin) {
@@ -1036,14 +1041,14 @@ class ModelController extends Controller
 
 
 
-public function verifyCode(Request $request)
+    public function verifyCode(Request $request)
 {
     $request->validate([
         'verification_code' => 'required|digits:6',
     ]);
 
     $record = ActionCode::where('code', $request->verification_code)
-        ->whereIn('action', ['create_candidate', 'update_candidate','add_contract', 'add_measurements'])
+        ->whereIn('action', ['create_candidate', 'update_candidate','add_contract', 'add_measurements','update_measurements', 'create_member','update_member'])
         ->where('expires_at', '>=', now())
         ->latest()
         ->first();
@@ -1189,7 +1194,9 @@ public function verifyCode(Request $request)
 
             $record->delete();
 
-            return redirect()->route('dashboard')->with('success', 'Candidat mis à jour avec succès.');
+            return redirect()->route('model.modify', $data['candidate_user_id'])
+                 ->with('success', 'Candidat mis à jour avec succès.');
+
 
         } catch (\Exception $e) {
             \Log::error('verifyCode update error', ['error' => $e->getMessage()]);
@@ -1199,7 +1206,7 @@ public function verifyCode(Request $request)
 
 
     // ========== CAS : ADD CONTRACT ==========
-if ($record->action === 'add_contract') {
+    if ($record->action === 'add_contract') {
     $data = $record->data;
 
     try {
@@ -1221,8 +1228,8 @@ if ($record->action === 'add_contract') {
 
         $record->delete();
 
-        return redirect()->route('model.profile', $candidate->user_id)
-                         ->with('success', 'Le contrat a été ajouté avec succès.');
+       return redirect()->route('model.modify', $candidate->user_id)
+                 ->with('success', 'Le contrat a été ajouté avec succès.');
 
     } catch (\Exception $e) {
         \Log::error('verifyCode add_contract error', ['error' => $e->getMessage()]);
@@ -1231,7 +1238,7 @@ if ($record->action === 'add_contract') {
 }
 
 // ========== CAS : ADD MEASUREMENTS ==========
-if ($record->action === 'add_measurements') {
+    if ($record->action === 'add_measurements') {
     $data = $record->data;
 
     try {
@@ -1254,17 +1261,92 @@ if ($record->action === 'add_measurements') {
 
         $record->delete();
 
-        return redirect()->route('model.profile', $candidate->user_id)
-                         ->with('success', 'Les mensurations ont été ajoutées avec succès.');
+        return redirect()->route('model.modify', $data['model_user_id'] ?? $candidate->user_id)
+                 ->with('success', 'Les mensurations ont été ajoutées avec succès.');
 
     } catch (\Exception $e) {
         \Log::error('verifyCode add_measurements error', ['error' => $e->getMessage()]);
         return back()->withErrors(['general' => 'Erreur lors de l\'ajout des mensurations : ' . $e->getMessage()]);
     }}
+
+
+ // ========== CAS : UPDATE MEASUREMENTS ==========
+    if ($record->action === 'update_measurements') {
+
+    if (!isset($data['measurement_id'])) {
+        return back()->withErrors(['general' => 'ID de mensuration manquant.']);
+    }
+
+    try {
+        $measurement = MannequinMeasurement::findOrFail((int) $data['measurement_id']);
+        $measurementData = collect($data)
+            ->except(['measurement_id', 'user_id'])
+            ->toArray();
+
+        $measurement->update($measurementData);
+
+        $record->delete();
+
+        return redirect()->route('model.modify', $data['model_user_id'])
+                 ->with('success', 'Mensurations mises à jour avec succès.');
+
+    } catch (\Exception $e) {
+        \Log::error('verifyCode update_measurements error', ['error' => $e->getMessage()]);
+        return back()->withErrors(['general' => 'Erreur : ' . $e->getMessage()]);
+    }
+}
+
+
+
+// ========== CAS : CREATE MEMBER ==========
+    if ($record->action === 'create_member') {
+    try {
+        User::create([
+            'name'     => $data['username'],
+            'email'    => $data['email'],
+            'password' => Hash::make($data['password']),
+            'role'     => $data['role'],
+        ]);
+
+        $record->delete();
+
+        return redirect()->route('dashboard.members')
+                         ->with('success', 'Membre ajouté avec succès.');
+
+    } catch (\Exception $e) {
+        \Log::error('verifyCode create_member error', ['error' => $e->getMessage()]);
+        return back()->withErrors(['general' => 'Erreur : ' . $e->getMessage()]);
+    }
+}
+
+// ========== CAS : UPDATE MEMBER ==========
+    if ($record->action === 'update_member') {
+    try {
+        $member       = User::findOrFail((int) $data['member_id']);
+        $member->name  = $data['username'];
+        $member->email = $data['email'];
+        $member->role  = $data['role'];
+
+        if (!empty($data['password'])) {
+            $member->password = Hash::make($data['password']);
+        }
+
+        $member->save();
+
+        $record->delete();
+
+        return redirect()->route('dashboard.members', $data['member_id'])
+                         ->with('success', 'Membre mis à jour avec succès.');
+
+    } catch (\Exception $e) {
+        \Log::error('verifyCode update_member error', ['error' => $e->getMessage()]);
+        return back()->withErrors(['general' => 'Erreur : ' . $e->getMessage()]);
+    }
+}
     return back()->withErrors(['general' => 'Action inconnue.']);
-}
-public function showVerificationForm()
-{
+    }
+    public function showVerificationForm()
+    {
     return view('auth.verify-code');
-}
+    }
 }
