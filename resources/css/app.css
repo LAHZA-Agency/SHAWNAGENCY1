@@ -1,0 +1,186 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    overflow: hidden;
+}
+
+.scrollable {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollable::-webkit-scrollbar {
+    display: none;
+}
+
+.dark .logo-white {
+    display: block;
+}
+
+.dark .logo-black {
+    display: none;
+}
+
+.logo-white {
+    display: none;
+}
+
+* {
+    color: hsla(var(--color-secondary));
+    font-family: "Montserrat", serif;
+}
+
+.ok {
+    color: #fafffb;
+}
+
+@layer base {
+    :root {
+        --color-primary: 0, 0%, 90%;
+        --color-primary-light: 0, 0%, 95%;
+        --color-primary-dark: 0, 0%, 80%;
+        --color-secondary: 0, 0%, 10%;
+        --color-secondary-light: 0, 0%, 40%;
+        --color-main: 0, 0%, 10%;
+        --color-main-dark: 0, 0%, 0%;
+        --color-main-light: 0, 0%, 30%, 0.9;
+        --color-c-border: 0, 0%, 75%;
+        --color-c-shadow: 0, 0%, 10%, 0.3;
+        --color-accent: 0, 0%, 42%;
+        --color-accent-dark: 0, 0%, 32%;
+        --color-accent-light: 0, 0%, 52%;
+        --scrollbar-track: transparent;
+        --scrollbar-thumb: 0, 0%, 65%, 0.25;
+        --scrollbar-width: 8px;
+        --color-error: 350, 89%, 60%;
+        --color-error-dark: 350, 89%, 40%;
+        --color-success: 139, 61%, 60%;
+        --color-success-dark: 139, 61%, 40%;
+    }
+
+    .dark {
+        --color-primary: 0, 0%, 10%;
+        --color-primary-light: 0, 0%, 15%;
+        --color-primary-dark: 0, 0%, 20%;
+        --color-secondary: 0, 0%, 90%;
+        --color-secondary-light: 0, 0%, 70%;
+        --color-main: 0, 0%, 80%;
+        --color-main-dark: 0, 0%, 70%, 0.8;
+        --color-main-light: 0, 0%, 90%, 0.7;
+        --color-accent: 0, 0%, 82%;
+        --color-accent-dark: 0, 0%, 72%;
+        --color-accent-light: 0, 0%, 92%;
+        --color-c-border: 0, 0%, 25%;
+        --color-c-shadow: 0, 0%, 10%, 1;
+        --color-success: 139, 61%, 70%;
+        --color-error: 350, 89%, 70%;
+    }
+}
+
+* {
+    scrollbar-width: thick;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+*::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+    height: var(--scrollbar-width);
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+*::-webkit-scrollbar-thumb {
+    background: hsl(var(--color-primary-dark), 0.8);
+    border-radius: var(--scrollbar-width);
+    border: calc(var(--scrollbar-width) / 4) solid hsl(var(--color-primary-light));
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--color-c-border));
+}
+
+.comments-conts hr:last-child {
+    display: none;
+}
+
+.fancybox__nav .carousel__button {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 8px;
+    border-radius: 50%;
+}
+
+.f-button svg {
+    stroke: white !important;
+}
+
+[type="text"]:focus,
+input:where(:not([type])):focus,
+[type="email"]:focus,
+[type="url"]:focus,
+[type="password"]:focus,
+[type="number"]:focus,
+[type="date"]:focus,
+[type="datetime-local"]:focus,
+[type="month"]:focus,
+[type="search"]:focus,
+[type="tel"]:focus,
+[type="time"]:focus,
+[type="week"]:focus,
+[multiple]:focus,
+textarea:focus,
+select:focus {
+    --tw-ring-color: hsl(var(--color-main));
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 0.5rem;
+    border-radius: 0.5rem;
+    background: hsl(var(--color-primary));
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: hsl(var(--color-main));
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: hsl(var(--color-main));
+    cursor: pointer;
+}
+
+.fancybox__container {
+    z-index: 99999 !important;
+}
+
+.no-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--color-primary-dark));
+    border: solid hsl(var(--color-primary));
+}
+
+@media(max-width:400px){
+    .measurement-from {
+        grid-template-columns: 1fr;
+    }
+}
