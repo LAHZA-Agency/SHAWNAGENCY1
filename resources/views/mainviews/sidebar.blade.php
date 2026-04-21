@@ -69,7 +69,7 @@ $roleMapping = [
                         </svg>
 
                         <div
-                            class="invisible z-[999] absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-secondary px-2 py-1.5 text-xs font-medium text-primary group-hover:visible whitespace-nowrap">
+                            class=" invisible z-[999] absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-secondary px-2 py-1.5 text-xs font-medium text-primary group-hover:visible whitespace-nowrap">
                             Tableau de bord
                         </div>
                     </a>
@@ -137,6 +137,65 @@ $roleMapping = [
                             </span>
                         </a>
                     </li>
+
+                    <li>
+                        <a
+                            href="{{ route('demandes.view') }}"
+                            class="group relative flex justify-center rounded px-2 py-1.5 text-main/60 hover:bg-primary-dark hover:text-main">
+
+                            <!-- Icon inbox -->
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-5 stroke-main">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M20.25 8.511c.884.29 1.5 1.118 1.5 2.072v5.417a2.25 2.25 0 0 1-2.25 2.25H4.5A2.25 2.25 0 0 1 2.25 16V10.583c0-.954.616-1.782 1.5-2.072M20.25 8.511V6.75A2.25 2.25 0 0 0 18 4.5H6A2.25 2.25 0 0 0 3.75 6.75v1.761M20.25 8.511l-8.25 5.25-8.25-5.25" />
+                            </svg>
+
+                            <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-secondary px-2 py-1.5 text-xs font-medium text-primary group-hover:visible whitespace-nowrap">
+                                Demandes
+                            </span>
+
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="{{ route('calendar.view') }}"
+                            class="group relative flex justify-center rounded px-2 py-1.5 text-main/60 hover:bg-primary-dark hover:text-main">
+
+                            <!-- Icon calendar -->
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-5 stroke-main">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M6.75 3v2.25M17.25 3v2.25M3 8.25h18M4.5 6.75h15A2.25 2.25 0 0 1 21.75 9v9A2.25 2.25 0 0 1 19.5 20.25h-15A2.25 2.25 0 0 1 2.25 18V9A2.25 2.25 0 0 1 4.5 6.75Z" />
+                            </svg>
+
+                            <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-secondary px-2 py-1.5 text-xs font-medium text-primary group-hover:visible whitespace-nowrap">
+                                Calendrier
+                            </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="{{ route('newsletter.index') }}"
+                            class="group relative flex justify-center rounded px-2 py-1.5 text-main/60 hover:bg-primary-dark hover:text-main">
+
+                            <!-- Icon envelope -->
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-5 stroke-main">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M21.75 7.5v9a2.25 2.25 0 0 1-2.25 2.25h-15A2.25 2.25 0 0 1 2.25 16.5v-9A2.25 2.25 0 0 1 4.5 5.25h15A2.25 2.25 0 0 1 21.75 7.5Zm0 0-9.75 6-9.75-6" />
+                            </svg>
+
+                            <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-secondary px-2 py-1.5 text-xs font-medium text-primary group-hover:visible whitespace-nowrap">
+                                Newsletters
+                            </span>
+                        </a>
+                    </li>
+
                 </ul>
                 @endcan
                 @endcan
@@ -217,8 +276,9 @@ $roleMapping = [
 
     @can('is-admin')
     <div class="hidden xl:flex h-screen flex-1 flex-col justify-between border-e border-c-border sideText transform transition-transform duration-300 ease-in-out">
-        <div class="px-4 py-6">
-            <ul class="mt-14 space-y-4">
+        <div class="px-4 py-6 flex-1 min-h-0  pb-24">
+            <ul class="mt-14 space-y-3">
+
                 <li class='w-full'>
                     <a href="{{ route('tableau-de-bord') }}" class="w-full">
                         <span class="text-sm w-full inline-block font-medium text-main hover:bg-primary-dark px-4 py-2 cursor-pointer rounded-lg"> Tableau de bord </span>
@@ -256,15 +316,12 @@ $roleMapping = [
                         </span>
                     </summary>
 
-                
+
                     <ul class="mt-2 space-y-1 px-4">
                         {{-- Filtrer par rôle - Dropdown --}}
                         @can('is-admin')
                         <li class="relative">
-
                             <details class="group">
-
-                            
                             <summary
                                     class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-main/60 hover:bg-primary-dark/70 hover:text-main cursor-pointer list-none transition">
 
@@ -278,13 +335,10 @@ $roleMapping = [
                                             stroke-linejoin="round"
                                             d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
                                     </svg>
-
                                     <span class="text-main/60 group-hover:text-main">
                                         Filtrer
                                     </span>
                                 </summary>
-                            
-
                                 <!-- DROPDOWN -->
                                 <div class="absolute left-0 top-full mt-2 z-[9999] w-[320px]
                                     opacity-0 scale-95 transition-all duration-200
@@ -295,16 +349,15 @@ $roleMapping = [
 
                                         <div class="p-4 overflow-y-auto max-h-[180px]">
                                             <strong class="block pb-3 text-xs font-medium uppercase opacity-65">
-                                                RÔLE
+                                                ROLE
                                             </strong>
-
                                             @foreach($roleMapping as $key => $displayName)
                                             <label class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer
                                                         hover:bg-primary transition
                                                         has-[:checked]:bg-primary-dark">
 
                                                 <input type="radio"
-                                                    name="role"
+                                                    name="role[]"
                                                     value="{{ $key }}"
                                                     class="hidden peer"
                                                     {{ request('role') === $key ? 'checked' : '' }} />
@@ -315,15 +368,12 @@ $roleMapping = [
                                             </label>
                                             @endforeach
                                         </div>
-
-                                        <!-- FOOTER -->
                                         <div class="sticky bottom-0 flex gap-2 p-4 border-t border-c-border bg-primary-light">
 
                                             <button type="submit"
                                                 class="flex-1 bg-main hover:bg-main-dark text-primary text-sm font-medium py-3 rounded-xl">
                                                 Appliquer
                                             </button>
-
                                             <a href="{{ route('dashboard.members') }}"
                                                 class="p-2 hover:bg-main/10 flex items-center justify-center rounded-xl transition">
 
@@ -341,14 +391,10 @@ $roleMapping = [
                                                         M4.5 12l3 3m-3-3-3 3" />
                                                 </svg>
                                             </a>
-
                                         </div>
-
                                     </form>
                                 </div>
-
                             </details>
-
                         </li>
                         @endcan
 
@@ -369,74 +415,71 @@ $roleMapping = [
                         </li>
 
                         <li>
-                      <li>
-                        <a
-                            href="{{ route('demandes.view') }}"
-                            class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-main/60 hover:bg-primary-dark/70 hover:text-main">
-                            Demandes
-                            <span id="demandes-badge"
-                                class="bg-black text-white text-xs px-2 py-0.5 rounded-full"
-                                style="{{ $unseenDemandesCount > 0 ? '' : 'display:none;' }}">
-                                {{ $unseenDemandesCount }}
-                            </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href="{{ route('calendar.view') }}"
-                            class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-main/60 hover:bg-primary-dark/70 hover:text-main">
-                            Calendrier
-                        </a>
-                    </li>
+                            <a
+                                href="{{ route('demandes.view') }}"
+                                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-main/60 hover:bg-primary-dark/70 hover:text-main">
+                                Demandes
+                                <span id="demandes-badge"
+                                    class="bg-black text-white text-xs px-2 py-0.5 rounded-full"
+                                    style="{{ $unseenDemandesCount > 0 ? '' : 'display:none;' }}">
+                                    {{ $unseenDemandesCount }}
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="{{ route('calendar.view') }}"
+                                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-main/60 hover:bg-primary-dark/70 hover:text-main">
+                                Calendrier
+                            </a>
+                        </li>
 
-                      <li>
-                        <a
-                            href="#"
-                            class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-main/60 hover:bg-primary-dark/70 hover:text-main">
-                            Newsletters
-                        </a>
-                    </li>
+                        <li>
+                            <a
+                                href="{{ route('newsletter.index') }}"
+                                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-main/60 hover:bg-primary-dark/70 hover:text-main">
+                                Newsletters
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </ul>
         </div>
-        <div class="div">
+
+        <div class="sticky bottom-0 border-t border-c-border bg-primary-dark/40 mt-auto">
             <input type="checkbox" id="toggle-logout" class="hidden peer">
-            <div class="w-full p-4 pb-0 hidden peer-checked:block nav-account-menu">
-                <div class="space-y-2 p-2 mb-2 bg-primary-light rounded-lg shadow-lg border border-c-border/50">
-                    <form method="POST" class="rounded-tl-lg rounded-tr-lg box-border px-4 py-3 hover:bg-primary-dark/70 hover:rounded-lg hover:text-main" action="{{ route('logout') }}">
+            <div class="hidden peer-checked:block p-4 pb-2 border-b border-c-border">
+                <div class="space-y-1 bg-primary-light rounded-xl shadow-lg border border-c-border/50 overflow-hidden">
+                    <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <a
-                            href="route('logout')"
-                            onclick="event.preventDefault();this.closest('form').submit();"
-                            class="flex justify-start items-center gap-4">
+                        <button
+                            type="submit"
+                            onclick="event.preventDefault(); this.closest('form').submit();"
+                            class="w-full flex items-center gap-4 px-4 py-3 hover:bg-primary-dark/70 text-left text-main hover:text-main transition-colors">
                             <svg class="size-5 scale-x-[-1] stroke-main" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
                             </svg>
-                            <span class='text-main text-base'>
-                                Se déconnecter
-                            </span>
-                        </a>
+                            <span class="text-base">Se déconnecter</span>
+                        </button>
                     </form>
-                    <a href="https://shawnagency.fr/wp-login.php" class="flex items-center  gap-4 px-4 py-3 rounded-bl-lg rounded-br-lg hover:bg-primary-dark/70 hover:rounded-lg hover:text-main">
+
+                    <a href="https://shawnagency.fr/wp-login.php"
+                    class="flex items-center gap-4 px-4 py-3 hover:bg-primary-dark/70 text-main hover:text-main transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 stroke-main">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                         </svg>
-                        <span class='text-main text-base'>
-                            Admin Wordpress
-                        </span>
+                        <span class="text-base">Admin Wordpress</span>
                     </a>
                 </div>
             </div>
-            <label for="toggle-logout" class="nav-account-menu-trigger select-none border border-c-border mx-4 mb-2 rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary-dark/70 hover:text-main flex justify-between items-center">
+
+
+            <label for="toggle-logout"
+                class="nav-account-menu-trigger select-none mx-4 my-3 rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-primary-dark/70 hover:text-main flex justify-between items-center cursor-pointer border border-c-border">
                 <span class="cursor-default text-main">
-                    @auth
-                    {{ Auth::user()->name }}
-                    @else
-                    Guest
-                    @endauth
+                    @auth {{ Auth::user()->name }} @else Guest @endauth
                 </span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 stroke-main">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 stroke-main transition-transform peer-checked:rotate-180">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
                 </svg>
             </label>

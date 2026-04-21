@@ -56,7 +56,7 @@ class MannequinMeasurementController extends Controller
             'belt_circumference'       => 'nullable|numeric',
         ]);
 
-        
+
         if (auth()->user()->role === 'bookeuse') {
             $admin = User::where('role', 'admin')->first();
 
@@ -87,7 +87,7 @@ class MannequinMeasurementController extends Controller
             });
 
             return redirect()->route('models.verification.show')
-                             ->with('success', 'Code envoyé à l\'admin pour validation des mensurations.');
+                             ->with('success');
         }
 
         try {
@@ -105,11 +105,11 @@ class MannequinMeasurementController extends Controller
             }
 
             if (Auth::user()->role === 'admin') {
-                return back()->with('success', 'Les mensurations ont été ajoutées avec succès.');
+                return back()->with('success');
             }
 
             return redirect()->route('dashboard')
-                             ->with('success', 'Les mensurations ont été ajoutées avec succès.');
+                             ->with('success');
 
         } catch (\Exception $e) {
             return back()
@@ -123,7 +123,7 @@ class MannequinMeasurementController extends Controller
         $measurement = MannequinMeasurement::findOrFail($id);
         $measurement->delete();
 
-        return back()->with('success', 'Les mensurations ont été supprimées avec succès.');
+        return back()->with('success');
     }
 
 
@@ -162,7 +162,7 @@ class MannequinMeasurementController extends Controller
         'belt_circumference'       => 'nullable|numeric',
     ]);
 
-   
+
     if (auth()->user()->role === 'bookeuse') {
         $admin = User::where('role', 'admin')->first();
 
@@ -176,7 +176,7 @@ class MannequinMeasurementController extends Controller
         'code'       => $code,
         'action'     => 'update_measurements',
         'data'       => array_merge(
-            $validated, 
+            $validated,
             [
                 'measurement_id' => (int) $id,
                 'user_id'        => auth()->id(),
@@ -196,12 +196,12 @@ class MannequinMeasurementController extends Controller
         });
 
         return redirect()->route('models.verification.show')
-                         ->with('success', 'Code envoyé à l\'admin pour validation.');
+                         ->with('success');
     }
-    
+
     try {
         $measurement->update($validated);
-        return back()->with('success', 'Les mensurations ont été mises à jour avec succès.');
+        return back()->with('success');
     } catch (\Exception $e) {
         Log::error('Error updating measurements: ' . $e->getMessage());
         return back()

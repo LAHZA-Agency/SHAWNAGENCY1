@@ -27,6 +27,11 @@ class MannequinCandidate extends Model
         'model_type',
         'disponibilite_debut',
         'disponibilite_fin',
+        'finition_peau',
+        'sous_ton',
+        'niveau',
+        'emotions',
+        'categorie',
     ];
 
     protected $casts = [

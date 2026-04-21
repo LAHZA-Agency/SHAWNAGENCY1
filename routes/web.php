@@ -12,6 +12,7 @@ use App\Models\Demande;
 use App\Http\Controllers\CalendrierController;
 use App\Http\Controllers\ModelRatingController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\NewsletterController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -120,15 +121,15 @@ Route::middleware(['auth', 'checkStatus', 'checkAdmin'])->group(function () {
     Route::delete('/demandes/{id}/delete', [DemandeController::class, 'destroy'])->name('demandes.delete');
     Route::get('/api/demandes/count', function () {
     if (!Auth::check()) return response()->json(['count' => 0]);
-    
+
     $user = Auth::user();
-    
+
     if ($user->role === 'admin') {
         $count = Demande::where('seen_by_admin', 0)->count();
     } else {
         $count = Demande::where('status', 0)->count();
     }
-    
+
     return response()->json(['count' => $count]);
 });
 
@@ -142,6 +143,11 @@ Route::middleware(['auth', 'checkStatus', 'checkAdmin'])->group(function () {
     Route::post('/verify-code', [ModelController::class, 'verifyCode'])->name('models.verifyCode');
     Route::get('/verification-code', [ModelController::class, 'showVerificationForm'])
     ->name('models.verification.show');
+
+
+    Route::get('/newsletters', [NewsletterController::class, 'view'])->name('newsletter.index');
+    Route::delete('/newsletters/{email}', [NewsletterController::class, 'destroy'])->name('newsletter.delete');
+
 });
 
 // Accueillant-only routes

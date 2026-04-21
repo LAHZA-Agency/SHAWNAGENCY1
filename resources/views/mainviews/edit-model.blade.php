@@ -60,7 +60,7 @@ $statusMapping = [
         }
         @endphp
         <div class="{{ $order1 }} w-full lg:w-2/3 bg-primary rounded-lg p-3 sm:p-6">
-            <!-- Model Inof -->
+            <!-- Model Info -->
             @can('is-admin')
             <div>
                 <div class="flex items-center justify-start max-w-full overflow-hidden sm:pb-6 pb-3">
@@ -71,7 +71,7 @@ $statusMapping = [
                     @csrf
                     @method('PUT')
                     <div class="w-full md:w-fit flex gap-4 sm:justify-between justify-around md:block flex-wrap sm:flex-nowrap">
-                        <!-- Profiel picture -->
+                        <!-- Profile picture -->
                         <div>
                             <div class="lazy-image-container relative aspect-square w-fit md:w-full">
                                 <div class="lazy-image-loader absolute rounded-xl inset-0 flex items-center justify-center bg-primary-light transition-opacity duration-300">
@@ -245,7 +245,7 @@ $statusMapping = [
                             <x-text-input id="langues_parlees" class="block mt-1 w-full" type="text" name="langues_parlees" value="{{ $model->mannequinCandidate->langues_parlees}} " />
                         </div>
 
-                        <!-- Physical Characteristics -->
+                        <!-- Ligne: Couleur des cheveux + Couleur des yeux + Sport pratiqué -->
                         <div>
                             <x-input-label for="couleur_cheveux" :value="__('Couleur des cheveux')" />
                             <x-text-input id="couleur_cheveux" class="block mt-1 w-full" type="text" name="couleur_cheveux" value="{{ $model->mannequinCandidate->couleur_cheveux}}" />
@@ -254,61 +254,132 @@ $statusMapping = [
                             <x-input-label for="couleur_yeux" :value="__('Couleur des yeux')" />
                             <x-text-input id="couleur_yeux" class="block mt-1 w-full" type="text" name="couleur_yeux" value="{{ $model->mannequinCandidate->couleur_yeux}}" />
                         </div>
+                        <div>
+                            <x-input-label for="sport_pratique" :value="__('Sport pratiqué')" />
+                            <x-text-input
+                                id="sport_pratique"
+                                class="block mt-1 w-full"
+                                type="text"
+                                name="sport_pratique"
+                                placeholder="Ex: Football, Natation, Yoga..."
+                                value="{{ $model->mannequinCandidate->sport_pratique }}"
+                            />
+                        </div>
 
-                       <!-- Extra  -->
+                        <!-- Extra fields spanning full width -->
                         <div class="sm:col-span-2 2xl:col-span-3 grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-6">
-                            <div>
-                                <x-input-label for="sport_pratique" :value="__('Sport pratiqué')" />
-                                <x-text-input 
-                                    id="sport_pratique" 
-                                    class="block mt-1 w-full" 
-                                    type="text" 
-                                    name="sport_pratique" 
-                                    placeholder="Ex: Football, Natation, Yoga..." 
-                                    value="{{ $model->mannequinCandidate->sport_pratique }}" 
-                                />
-                            </div>
 
+                            <!-- Ligne: Piercings + Tatouages + Finition de peau (dropdown) -->
                             <div>
                                 <x-input-label for="piercings" :value="__('Piercings')" />
-                                <x-text-input 
-                                    id="piercings" 
-                                    class="block mt-1 w-full" 
-                                    type="text" 
-                                    name="piercings" 
-                                    placeholder="Ex: Oreilles, Nez, Nombril..." 
-                                    value="{{ $model->mannequinCandidate->piercings }}" 
+                                <x-text-input
+                                    id="piercings"
+                                    class="block mt-1 w-full"
+                                    type="text"
+                                    name="piercings"
+                                    placeholder="Ex: Oreilles, Nez, Nombril..."
+                                    value="{{ $model->mannequinCandidate->piercings }}"
                                 />
                             </div>
-
                             <div>
                                 <x-input-label for="tatouages" :value="__('Tatouages')" />
-                                <x-text-input 
-                                    id="tatouages" 
-                                    class="block mt-1 w-full" 
-                                    type="text" 
-                                    name="tatouages" 
-                                    placeholder="Ex: Bras droit, Dos, Cheville..." 
-                                    value="{{ $model->mannequinCandidate->tatouages }}" 
+                                <x-text-input
+                                    id="tatouages"
+                                    class="block mt-1 w-full"
+                                    type="text"
+                                    name="tatouages"
+                                    placeholder="Ex: Bras droit, Dos, Cheville..."
+                                    value="{{ $model->mannequinCandidate->tatouages }}"
                                 />
+                            </div>
+                            <div>
+                                <x-input-label for="finition_peau" :value="__('Finition de peau')" />
+                                <select
+                                    id="finition_peau"
+                                    name="finition_peau"
+                                    class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm {{ $errors->has('finition_peau') ? '!border-error' : '' }}">
+                                    <option value="" disabled {{ empty($model->mannequinCandidate->finition_peau) ? 'selected' : '' }}>-- Choisir --</option>
+                                    <option value="Mate"      {{ $model->mannequinCandidate->finition_peau == 'Mate'      ? 'selected' : '' }}>Mate</option>
+                                    <option value="Lumineuse" {{ $model->mannequinCandidate->finition_peau == 'Lumineuse' ? 'selected' : '' }}>Lumineuse</option>
+                                    <option value="Sèche"     {{ $model->mannequinCandidate->finition_peau == 'Sèche'     ? 'selected' : '' }}>Sèche</option>
+                                    <option value="Grasse"    {{ $model->mannequinCandidate->finition_peau == 'Grasse'    ? 'selected' : '' }}>Grasse</option>
+                                </select>
+                                <x-input-error :messages="$errors->get('finition_peau')" class="mt-2" />
+                            </div>
+
+                            <!-- Ligne: Sous-ton (dropdown) + Niveau (dropdown) + Émotions (dropdown) -->
+                            <div>
+                                <x-input-label for="sous_ton" :value="__('Sous-ton')" />
+                                <select
+                                    id="sous_ton"
+                                    name="sous_ton"
+                                    class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm {{ $errors->has('sous_ton') ? '!border-error' : '' }}">
+                                    <option value="" disabled {{ empty($model->mannequinCandidate->sous_ton) ? 'selected' : '' }}>-- Choisir --</option>
+                                    <option value="Froid"  {{ $model->mannequinCandidate->sous_ton == 'Froid'  ? 'selected' : '' }}>Froid</option>
+                                    <option value="Chaud"  {{ $model->mannequinCandidate->sous_ton == 'Chaud'  ? 'selected' : '' }}>Chaud</option>
+                                    <option value="Neutre" {{ $model->mannequinCandidate->sous_ton == 'Neutre' ? 'selected' : '' }}>Neutre</option>
+                                </select>
+                                <x-input-error :messages="$errors->get('sous_ton')" class="mt-2" />
+                            </div>
+                            <div>
+                                <x-input-label for="niveau" :value="__('Niveau')" />
+                                <select
+                                    id="niveau"
+                                    name="niveau"
+                                    class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm {{ $errors->has('niveau') ? '!border-error' : '' }}">
+                                    <option value="" disabled {{ empty($model->mannequinCandidate->niveau) ? 'selected' : '' }}>-- Choisir --</option>
+                                    @foreach(range(1, 10) as $n)
+                                        <option value="{{ $n }}" {{ $model->mannequinCandidate->niveau == $n ? 'selected' : '' }}>{{ $n }}</option>
+                                    @endforeach
+                                    <option value="Hors-catégorie" {{ $model->mannequinCandidate->niveau == 'Hors-catégorie' ? 'selected' : '' }}>Hors-catégorie</option>
+                                </select>
+                                <x-input-error :messages="$errors->get('niveau')" class="mt-2" />
+                            </div>
+                            <div>
+                                <x-input-label for="emotions" :value="__('Émotions')" />
+                                <select
+                                    id="emotions"
+                                    name="emotions"
+                                    class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm {{ $errors->has('emotions') ? '!border-error' : '' }}">
+                                    <option value="" disabled {{ empty($model->mannequinCandidate->emotions) ? 'selected' : '' }}>-- Choisir --</option>
+                                    <option value="Autorité"   {{ $model->mannequinCandidate->emotions == 'Autorité'   ? 'selected' : '' }}>Autorité</option>
+                                    <option value="Sensualité" {{ $model->mannequinCandidate->emotions == 'Sensualité' ? 'selected' : '' }}>Sensualité</option>
+                                    <option value="Glamour"    {{ $model->mannequinCandidate->emotions == 'Glamour'    ? 'selected' : '' }}>Glamour</option>
+                                    <option value="Anticode"   {{ $model->mannequinCandidate->emotions == 'Anticode'   ? 'selected' : '' }}>Anticode</option>
+                                    <option value="Opulence"   {{ $model->mannequinCandidate->emotions == 'Opulence'   ? 'selected' : '' }}>Opulence</option>
+                                </select>
+                                <x-input-error :messages="$errors->get('emotions')" class="mt-2" />
+                            </div>
+
+                            <!-- Ligne: Catégorie (dropdown) + Lien Instagram -->
+                            <div>
+                                <x-input-label for="categorie" :value="__('Catégorie')" />
+                                <select
+                                    id="categorie"
+                                    name="categorie"
+                                    class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm {{ $errors->has('categorie') ? '!border-error' : '' }}">
+                                    <option value="" disabled {{ empty($model->mannequinCandidate->categorie) ? 'selected' : '' }}>-- Choisir --</option>
+                                    <option value="Beauté"               {{ $model->mannequinCandidate->categorie == 'Beauté'               ? 'selected' : '' }}>Beauté</option>
+                                    <option value="Commercial"           {{ $model->mannequinCandidate->categorie == 'Commercial'           ? 'selected' : '' }}>Commercial</option>
+                                    <option value="Défilé"               {{ $model->mannequinCandidate->categorie == 'Défilé'               ? 'selected' : '' }}>Défilé</option>
+                                    <option value="Photo shoot puissant" {{ $model->mannequinCandidate->categorie == 'Photo shoot puissant' ? 'selected' : '' }}>Photo shoot puissant</option>
+                                </select>
+                                <x-input-error :messages="$errors->get('categorie')" class="mt-2" />
+                            </div>
+                            <div class="sm:col-span-1 2xl:col-span-2">
+                                <x-input-label for="instagram_link" :value="__('Lien Instagram :')" />
+                                <x-text-input
+                                    id="instagram_link" class="{{ $errors->has('instagram_link') ? '!border-error' : '' }}"
+                                    type="text" name="instagram_link"
+                                    value="{{ $model->mannequinCandidate->instagram_link }}" />
+                                <x-input-error :messages="$errors->get('instagram_link')" class="mt-2" />
+                                <span class="instagram_link-error-message text-error text-xs"></span>
                             </div>
                         </div>
 
-
-                        <!-- instagram_link -->
-                        <div class="sm:col-span-2 2xl:col-span-3">
-                            <x-input-label for="instagram_link" :value="__('Lien Instagram :')" />
-                            <x-text-input
-                                id="instagram_link" class="{ $errors->has('instagram_link') ? '!border-error' : '' }}"
-                                type="text" name="instagram_link"
-                                value="{{ $model->mannequinCandidate->instagram_link }}" />
-                            <x-input-error :messages="$errors->get('instagram_link')" class="mt-2" />
-                            <span class="instagram_link-error-message text-error text-xs"></span>
-                        </div>
-                               {{-- des disponibilités --}}
-                         <div>
+                        <!-- Disponibilité -->
+                        <div>
                             <x-input-label :value="__('Disponibilité')" />
-
                             <div class="flex gap-2 mt-1">
                                 <input
                                     type="date"
@@ -317,9 +388,7 @@ $statusMapping = [
                                     value="{{ old('disponibilite_debut', optional($model->mannequinCandidate)->disponibilite_debut?->format('Y-m-d')) }}"
                                     class="block w-full rounded-lg border border-c-border p-2 text-sm focus:ring-main focus:border-main"
                                 >
-
                                 <span class="self-center text-sm">au</span>
-
                                 <input
                                     type="date"
                                     id="date_fin"
@@ -328,16 +397,13 @@ $statusMapping = [
                                     class="block w-full rounded-lg border border-c-border p-2 text-sm focus:ring-main focus:border-main"
                                 >
                             </div>
-
                             @error('disponibilite_debut')
                                 <p class="text-error text-sm mt-1">{{ $message }}</p>
                             @enderror
-
                             @error('disponibilite_fin')
                                 <p class="text-error text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-
 
                         <!-- Identity document -->
                         <div class="sm:col-span-2 2xl:col-span-3 flex flex-wrap 2xl:flex-nowrap justify-between items-start">
@@ -395,6 +461,7 @@ $statusMapping = [
                 </form>
             </div>
             @endcan
+            
 
             @cannot('is-admin')
             <div>
@@ -438,7 +505,6 @@ $statusMapping = [
                     </div>
                     @endforeach
                 </div>
-
 
                 @if(!empty($model->mannequinCandidate->instagram_link))
                 <div class="sm:pt-16 pt-8">
@@ -495,7 +561,6 @@ $statusMapping = [
                         <x-measurement-input name="small_hips_circumference" label="Tour des petites hanches" value="{{ $model->mannequinCandidate->measurements->first()->small_hips_circumference ?? '' }}" />
                         @endif
                         <x-measurement-input name="tour_de_hanches" label="Tour de hanche" value="{{ $model->mannequinCandidate->measurements->first()->tour_de_hanches ?? '' }}" />
-                        <!-- <x-measurement-input name="hips_circumference" label="Tour de bassin" value="{{ $model->mannequinCandidate->measurements->first()->hips_circumference ?? '' }}" /> -->
                         <x-measurement-input name="thigh_circumference" label="Tour de cuisse" value="{{ $model->mannequinCandidate->measurements->first()->thigh_circumference ?? '' }}" />
                         <x-measurement-input name="knee_circumference" label="Tour de genou" value="{{ $model->mannequinCandidate->measurements->first()->knee_circumference ?? '' }}" />
                         <x-measurement-input name="calf_circumference" label="Tour de mollet" value="{{ $model->mannequinCandidate->measurements->first()->calf_circumference ?? '' }}" />
@@ -789,7 +854,7 @@ $statusMapping = [
                 </div>
             </div>
 
-            <!-- Downlaod PDF -->
+            <!-- Download PDF -->
             <div class="sm:pt-16 pt-8 w-full">
                 <div class="flex items-center justify-start max-w-full pb-6">
                     <h2 class="text-base sm:text-lg font-semibold whitespace-nowrap">Fiche du mannequin</h2>
@@ -1239,7 +1304,7 @@ $statusMapping = [
     </div>
     @endcan
 
-    <!-- Observation pf the others -->
+    <!-- Observation of the others -->
     @cannot('is-admin')
     @cannot('is-jury')
     <div id="tab3" class="tab hidden md:pt-8">
@@ -1311,7 +1376,7 @@ $statusMapping = [
     @endcannot
 </main>
 
-<!-- confermation alert -->
+<!-- confirmation alert -->
 <div
     class="delete-confirm fixed inset-0 w-full h-full items-center justify-center hidden bg-black/50 backdrop-blur-sm z-[99999]">
 
@@ -1417,7 +1482,7 @@ $statusMapping = [
     </div>
 </div>
 
-<!-- Succss/Error message frontend only -->
+<!-- Success/Error message frontend only -->
 <div class="toast-success-order transition-all duration-700 fixed z-100 bottom-6 right-6 bg-success/50 backdrop-blur rounded-xl border p-4 focus:!ring-success !border-success/80 text-success translate-y-[150%]">
     <div role="alert" class="alert alert-success flex gap-2">
         <svg

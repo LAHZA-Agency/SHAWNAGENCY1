@@ -47,7 +47,7 @@ class MemberController extends Controller
             'data'       => [
                 'username' => $request->username,
                 'email'    => $request->email,
-                'password' => $request->password, // mot de passe en clair temporairement
+                'password' => $request->password,
                 'role'     => $request->role,
             ],
             'user_id'    => auth()->id(),
@@ -63,7 +63,7 @@ class MemberController extends Controller
         });
 
         return redirect()->route('models.verification.show')
-                         ->with('success', 'Code envoyé à l\'admin pour validation.');
+                         ->with('success');
     }
 
         try {
@@ -75,8 +75,8 @@ class MemberController extends Controller
                 'role' => $request->role,
             ]);
 
-            return Redirect::back()->with(['success' => 'Le membre est ajouté avec succès.']);
-        } 
+            return Redirect::back()->with(['success']);
+        }
         catch (\Exception $e) {
             return redirect()->back()
                 ->withErrors(['general' => 'Erreur lors de la création de membre: ' . $e->getMessage()]);
@@ -148,7 +148,7 @@ class MemberController extends Controller
 
         if ($member) {
             $member->delete();
-            return response()->json(['success' => 'Membre supprimé avec succès.']);
+            return response()->json(['success']);
         }
 
         return response()->json(['error' => 'Membre introuvable'], 404);
@@ -187,7 +187,7 @@ class MemberController extends Controller
                 'member_id' => (int) $id,
                 'username'  => $request->username,
                 'email'     => $request->email,
-                'password'  => $request->password, 
+                'password'  => $request->password,
                 'role'      => $request->role,
             ],
             'user_id'    => auth()->id(),
@@ -203,9 +203,9 @@ class MemberController extends Controller
         });
 
         return redirect()->route('models.verification.show')
-                         ->with('success', 'Code envoyé à l\'admin pour validation.');
+                         ->with('success');
     }
-    
+
 
     try {
         $member       = User::findOrFail($id);
@@ -219,7 +219,7 @@ class MemberController extends Controller
 
         $member->save();
 
-        return redirect()->back()->with('success', 'Le membre est mis à jour avec succès.');
+        return redirect()->back()->with('success');
     } catch (\Exception $e) {
         return redirect()->back()
             ->withErrors(['general' => 'Erreur : ' . $e->getMessage()]);
@@ -237,9 +237,9 @@ class MemberController extends Controller
 
             $member->save();
 
-            
-            return Redirect::back()->with(['success' => 'Le membre est ajouté avec succès.']);
-        } 
+
+            return Redirect::back()->with(['success']);
+        }
         catch (\Exception $e) {
             return redirect()->back()
                 ->withErrors(['general' => 'Erreur lors de la création de membre: ' . $e->getMessage()]);

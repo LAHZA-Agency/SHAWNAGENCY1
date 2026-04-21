@@ -69,14 +69,14 @@
                 <tbody class="divide-y divide-c-border">
                     @forelse($demandes as $demande)
                     <tr class="hover:bg-primary/10 transition-all duration-150">
-                        <td class="whitespace-nowrap px-4 py-2">{{ $demande->created_at->format('d/m/Y') }}</td>
-                        <td class="whitespace-nowrap px-4 py-2 font-medium">{{ $demande->name }}</td>
-                        <td class="whitespace-nowrap px-4 py-2">{{ $demande->email }}</td>
-                        <td class="whitespace-nowrap px-4 py-2">{{ $demande->tel }}</td>
-                        <td class="whitespace-nowrap px-4 py-2">{{ $demande->mannequinCandidate->user->name ?? 'N/A' }}</td>
-                        <td class="whitespace-nowrap px-4 py-2">{{ $demande->message }}</td>
-                       <td class="whitespace-nowrap px-4 py-2">
-                      <button type="button" 
+                        <td class="whitespace-nowrap px-4 py-2 text-center" >{{ $demande->created_at->format('d/m/Y') }}</td>
+                        <td class="whitespace-nowrap px-4 py-2 text-center font-medium">{{ $demande->name }}</td>
+                        <td class="whitespace-nowrap px-4 py-2 text-center">{{ $demande->email }}</td>
+                        <td class="whitespace-nowrap px-4 py-2 text-center">{{ $demande->tel }}</td>
+                        <td class="whitespace-nowrap px-4 py-2 text-center">{{ $demande->mannequinCandidate->user->name ?? 'N/A' }}</td>
+                        <td class="whitespace-nowrap px-4 py-2 text-center">{{ $demande->message }}</td>
+                       <td class="whitespace-nowrap px-4 py-2 text-center">
+                      <button type="button"
                             class="delete-demande-btn px-4"
                             data-id="{{ $demande->id }}"
                             data-url="{{ route('demandes.delete', $demande->id) }}">
@@ -191,7 +191,7 @@
 {{-- Modal non autorisé pour bookeuse (Demandes) --}}
 <div id="unauthorized-modal-demande"
      class="fixed inset-0 p-2 w-full h-full items-center justify-center bg-black/50 hidden backdrop-blur-sm z-[999999]">
-    
+
     <div class="unauthorized-content-demande rounded-xl border border-c-border bg-primary p-4 transition-all duration-500 opacity-0 translate-y-20 max-w-96">
         <div class="flex items-start gap-4">
             <div class="flex-1">

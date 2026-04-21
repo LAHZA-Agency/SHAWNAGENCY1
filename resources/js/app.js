@@ -2159,7 +2159,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-
 document.addEventListener('DOMContentLoaded', function () {
 
     const form = document.getElementById('contactForm');
@@ -2215,10 +2214,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
-
-
-
-
 
 
 
@@ -2311,7 +2306,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     title: event.title,
                     start: event.start,
                     end: event.end,
-                    slug: event.slug || event.title  
+                    slug: event.slug || event.title
                 }]
             };
         });
@@ -2655,7 +2650,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const closeButtons = deleteModal.querySelectorAll('.close-dialog-btn');
     const unauthorizedContent = unauthorizedModal.querySelector('.unauthorized-content-demande');
 
-    const userRole = deleteModal.dataset.userRole;   
+    const userRole = deleteModal.dataset.userRole;
 
     function openUnauthorizedModal() {
         unauthorizedModal.classList.remove('hidden');
@@ -2714,6 +2709,87 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+document.addEventListener('DOMContentLoaded', function () {
 
+    const deleteModal = document.getElementById('delete-confirm-modal');
+    const unauthorizedModal = document.getElementById('unauthorized-modal-newsletter');
 
+    const deleteForm = document.getElementById('delete-form');
+
+    if (!deleteModal || !deleteForm) return;
+
+    const modalContent = deleteModal.querySelector('.alert-dialog-content');
+    const unauthorizedContent = unauthorizedModal?.querySelector('.unauthorized-content-newsletter');
+
+    const userRole = deleteModal.dataset.userRole;
+
+    function openUnauthorizedModal() {
+        unauthorizedModal.classList.remove('hidden');
+        unauthorizedModal.classList.add('flex');
+
+        setTimeout(() => {
+            unauthorizedContent.classList.remove('opacity-0', 'translate-y-20');
+        }, 10);
+    }
+
+    function closeUnauthorizedModal() {
+        unauthorizedContent.classList.add('opacity-0', 'translate-y-20');
+
+        setTimeout(() => {
+            unauthorizedModal.classList.add('hidden');
+            unauthorizedModal.classList.remove('flex');
+        }, 200);
+    }
+
+    document.querySelectorAll('.close-unauthorized-newsletter').forEach(btn => {
+        btn.addEventListener('click', closeUnauthorizedModal);
+    });
+
+    // OPEN MODAL DELETE
+    document.querySelectorAll('.delete-newsletter-btn').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const url = this.getAttribute('data-url');
+            deleteForm.action = url;
+
+            deleteModal.classList.remove('hidden');
+            deleteModal.classList.add('flex');
+
+            setTimeout(() => {
+                modalContent.classList.remove('opacity-0', 'translate-y-20');
+            }, 10);
+        });
+    });
+
+    // CLOSE MODAL
+    deleteModal.querySelectorAll('.close-dialog-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            modalContent.classList.add('opacity-0', 'translate-y-20');
+
+            setTimeout(() => {
+                deleteModal.classList.add('hidden');
+                deleteModal.classList.remove('flex');
+            }, 200);
+        });
+    });
+
+    // BLOCK BOOKEUSE (IMPORTANT)
+    deleteForm.addEventListener('submit', function (e) {
+
+        if (userRole === 'bookeuse') {
+            e.preventDefault();
+
+            modalContent.classList.add('opacity-0', 'translate-y-20');
+
+            setTimeout(() => {
+                deleteModal.classList.add('hidden');
+                deleteModal.classList.remove('flex');
+
+                openUnauthorizedModal();
+            }, 200);
+        }
+    });
+
+});
 

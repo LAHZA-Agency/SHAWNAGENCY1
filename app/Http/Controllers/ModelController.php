@@ -146,9 +146,8 @@ class ModelController extends Controller
         return view('mainviews.tableau-de-bord', compact('statistics'));
     }
 
-   public function store(Request $request)
+  public function store(Request $request)
 {
-    // Validation
     $validatedData = $request->validate([
         'username'            => ['required', 'string', 'max:255', 'regex:/^[a-zA-ZÀ-ÿ\s\'\-]+$/'],
         'email'               => ['required', 'string', 'unique:users,email', 'max:255', 'regex:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/'],
@@ -168,26 +167,28 @@ class ModelController extends Controller
         'model_type'          => 'required|in:Model,Mannequin',
         'disponibilite_debut' => 'required|date',
         'disponibilite_fin'   => 'required|date|after_or_equal:disponibilite_debut',
+        'finition_peau' => ['nullable', 'in:Mate,Lumineuse,Sèche,Grasse'],
+        'sous_ton'      => ['nullable', 'in:Froid,Chaud,Neutre'],
+        'niveau'        => ['nullable', 'string', 'max:20'],
+        'emotions'      => ['nullable', 'in:Autorité,Sensualité,Glamour,Anticode,Opulence'],
+        'categorie'     => ['nullable', 'in:Beauté,Commercial,Défilé,Photo shoot puissant'],
     ]);
 
     // ====================== CAS BOOKEEUSE ======================
     if (auth()->check() && auth()->user()->role === 'bookeuse') {
-        
         $admin = User::where('role', 'admin')->first();
 
         if (!$admin) {
             return back()->withErrors(['general' => 'Admin introuvable']);
         }
 
-        $profilePath = null;
-        if ($request->hasFile('profile')) {
-            $profilePath = $request->file('profile')->store("temp/profiles", 'public');
-        }
+        $profilePath = $request->hasFile('profile')
+            ? $request->file('profile')->store("temp/profiles", 'public_direct')
+            : null;
 
-        $identityPath = null;
-        if ($request->hasFile('identity_document')) {
-            $identityPath = $request->file('identity_document')->store("temp/identities", 'public');
-        }
+        $identityPath = $request->hasFile('identity_document')
+            ? $request->file('identity_document')->store("temp/identities", 'public_direct')
+            : null;
 
         $code = rand(100000, 999999);
 
@@ -213,10 +214,10 @@ class ModelController extends Controller
         });
 
         return redirect()->route('models.verification.show')
-            ->with('success', 'Code envoyé à l\'admin');
+            ->with('success', 'Code de validation envoyé à l\'admin.');
     }
 
-   // ====================== CAS NORMAL (inscription publique) ======================
+    // ====================== CAS NORMAL (Admin ou autre) ======================
     try {
         $user = User::create([
             'name'     => $validatedData['username'],
@@ -230,11 +231,11 @@ class ModelController extends Controller
         $user->save();
 
         $profilePath = $request->hasFile('profile')
-            ? $request->file('profile')->store("models/{$user->id}/profile", 'public')
+            ? $request->file('profile')->store("models/{$user->id}/profile", 'public_direct')
             : null;
 
         $identityDocumentPath = $request->file('identity_document')
-            ->store("models/{$user->id}/identity", 'public');
+            ->store("models/{$user->id}/identity", 'public_direct');
 
         $candidate = MannequinCandidate::create([
             'user_id'              => $user->id,
@@ -244,21 +245,27 @@ class ModelController extends Controller
             'status_model'         => 'pending',
             'verified'             => 'pending',
             'gender_identity'      => $validatedData['gender_identity'],
-            'langues_parlees'      => $validatedData['langues_parlees'],
-            'couleur_cheveux'      => $validatedData['couleur_cheveux'],
-            'couleur_yeux'         => $validatedData['couleur_yeux'],
+            'langues_parlees'      => $validatedData['langues_parlees'] ?? null,
+            'couleur_cheveux'      => $validatedData['couleur_cheveux'] ?? null,
+            'couleur_yeux'         => $validatedData['couleur_yeux'] ?? null,
             'sport_pratique'       => $validatedData['sport_pratique'] ?? null,
             'piercings'            => $validatedData['piercings'] ?? null,
             'tatouages'            => $validatedData['tatouages'] ?? null,
-            'instagram_link'       => $validatedData['instagram_link'],
+            'instagram_link'       => $validatedData['instagram_link'] ?? null,
             'model_type'           => $validatedData['model_type'],
             'disponibilite_debut'  => $validatedData['disponibilite_debut'],
             'disponibilite_fin'    => $validatedData['disponibilite_fin'],
+            'finition_peau' => $validatedData['finition_peau'] ?? null,
+            'sous_ton'      => $validatedData['sous_ton'] ?? null,
+            'niveau'        => $validatedData['niveau'] ?? null,
+            'emotions'      => $validatedData['emotions'] ?? null,
+            'categorie'     => $validatedData['categorie'] ?? null,
         ]);
 
+        // Sauvegarde des images supplémentaires
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $imagePath = $image->store("models/{$user->id}/additional_images", 'public');
+                $imagePath = $image->store("models/{$user->id}/additional_images", 'public_direct');
                 MannequinImage::create([
                     'user_id'      => $user->id,
                     'candidate_id' => $candidate->id,
@@ -267,15 +274,15 @@ class ModelController extends Controller
             }
         }
 
-        Auth::login($user);
-
-        // Redirection vers son propre profil (avec son slug)
-        return redirect()->route('model.view', $user->slug)
-            ->with('success', 'Votre compte a été créé avec succès !');
+     
+        return redirect()->route('models.create')  // ou le nom de ta route pour add-model.blade.php
+            ->with('success', 'Le mannequin a été ajouté avec succès !');
 
     } catch (\Exception $e) {
         Log::error('Erreur création candidat : ' . $e->getMessage());
-        return redirect()->back()->withErrors(['general' => 'Erreur lors de la création : ' . $e->getMessage()]);
+        return redirect()->back()
+            ->withErrors(['general' => 'Erreur lors de la création : ' . $e->getMessage()])
+            ->withInput();
     }
 }
 
@@ -325,7 +332,7 @@ class ModelController extends Controller
 
         DB::commit();
 
-        return redirect()->back()->with(['success' => 'Mannequin supprimé avec succès.']);
+        return redirect()->back()->with(['success']);
     } catch (\Exception $e) {
         DB::rollBack();
         return redirect()->back()->withErrors(['error' => 'Erreur lors de la suppression du mannequin: ' . $e->getMessage()]);
@@ -378,7 +385,13 @@ class ModelController extends Controller
         $candidateId = $model->mannequinCandidate->id;
         $images = MannequinImage::where('candidate_id', $candidateId)->get();
 
-        return view('mainviews.model-single', compact('model', 'images'));
+         $profilePhoto = $model->mannequinCandidate->profile
+        ? asset('storage/' . $model->mannequinCandidate->profile)
+        : ($images->isNotEmpty()
+            ? asset('storage/' . $images->sortBy('position')->first()->image_url)
+            : null);
+
+        return view('mainviews.model-single', compact('model', 'images', 'profilePhoto'));
     }
 
     public function verify_model($id, $status)
@@ -403,7 +416,7 @@ class ModelController extends Controller
             });
 
             return redirect()->route('dashboard')
-                ->with('success', 'Le statut du mannequin a été mis à jour avec succès.');
+                ->with('success');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withErrors(['error' => 'Erreur lors de la mise à jour du statut: ' . $e->getMessage()]);
@@ -578,7 +591,7 @@ class ModelController extends Controller
             $candidate = MannequinCandidate::findOrFail($validatedData['model_id']);
 
             foreach ($request->file('images') as $image) {
-                $imagePath = $image->store("models/{$candidate->user_id}/additional_images", 'public');
+                $imagePath = $image->store("models/{$candidate->user_id}/additional_images", 'public_direct');
 
                 MannequinImage::create([
                     'user_id' => Auth::id(),
@@ -788,7 +801,6 @@ class ModelController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Votre message a été envoyé avec succès !',
             'count' => $count
         ]);
     }
@@ -796,9 +808,11 @@ class ModelController extends Controller
     $demandes = Demande::where('mannequin_candidate_id', $mannequinCandidate->id)->latest()->get();
 
     return redirect()->route('model.view', $model->name)
-                     ->with('success', 'Votre message a été envoyé avec succès !')
+                     ->with('success')
                      ->with('demandes', $demandes);
     }
+
+
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
@@ -823,6 +837,11 @@ class ModelController extends Controller
             'model_type' => 'required|in:Model,Mannequin',
             'disponibilite_debut' => 'required|date',
             'disponibilite_fin' => 'required|date|after_or_equal:disponibilite_debut',
+            'finition_peau' => ['nullable', 'in:Mate,Lumineuse,Sèche,Grasse'],
+            'sous_ton'      => ['nullable', 'in:Froid,Chaud,Neutre'],
+            'niveau'        => ['nullable', 'string', 'max:20'],
+            'emotions'      => ['nullable', 'in:Autorité,Sensualité,Glamour,Anticode,Opulence'],
+            'categorie'     => ['nullable', 'in:Beauté,Commercial,Défilé,Photo shoot puissant'],
         ]);
 
         if (auth()->user()->role === 'bookeuse') {
@@ -835,12 +854,12 @@ class ModelController extends Controller
         // Stocker les fichiers temporairement
         $profilePath = null;
         if ($request->hasFile('profile_picture')) {
-            $profilePath = $request->file('profile_picture')->store("temp/profiles", 'public');
+            $profilePath = $request->file('profile_picture')->store("temp/profiles", 'public_direct');
         }
 
         $identityPath = null;
         if ($request->hasFile('identity_document')) {
-            $identityPath = $request->file('identity_document')->store("temp/identities", 'public');
+            $identityPath = $request->file('identity_document')->store("temp/identities", 'public_direct');
         }
 
         $code = rand(100000, 999999);
@@ -881,12 +900,12 @@ class ModelController extends Controller
             $user->save();
 
             if ($request->hasFile('profile_picture')) {
-                $profilePath = $request->file('profile_picture')->store("models/{$user->id}/profile", 'public');
+                $profilePath = $request->file('profile_picture')->store("models/{$user->id}/profile", 'public_direct');
                 $candidate->profile = $profilePath;
             }
 
             if ($request->hasFile('identity_document')) {
-                $identityDocumentPath = $request->file('identity_document')->store("models/{$user->id}/identity", 'public');
+                $identityDocumentPath = $request->file('identity_document')->store("models/{$user->id}/identity", 'public_direct');
                 $candidate->identity_document = $identityDocumentPath;
             }
 
@@ -902,6 +921,11 @@ class ModelController extends Controller
             $candidate->model_type = $validatedData['model_type'];
             $candidate->disponibilite_debut= $validatedData['disponibilite_debut'];
             $candidate->disponibilite_fin = $validatedData['disponibilite_fin'];
+            $candidate->finition_peau = $validatedData['finition_peau'] ?? null;
+            $candidate->sous_ton      = $validatedData['sous_ton'] ?? null;
+            $candidate->niveau        = $validatedData['niveau'] ?? null;
+            $candidate->emotions      = $validatedData['emotions'] ?? null;
+            $candidate->categorie     = $validatedData['categorie'] ?? null;
 
             $oldStatus = $candidate->status_model;
             $newStatus = $validatedData['status_model'];

@@ -1,88 +1,88 @@
 @extends('dashboard')
+
 @section('content')
-
 <div class="max-w-5xl mx-auto">
-    <h1 class="text-lg sm:text-3xl font-semibold text-center ">Ajouter un mannequin</h1>
+    <h1 class="text-lg sm:text-3xl font-semibold text-center">Ajouter un mannequin</h1>
+    <p class="text-center mt-2">Veuillez remplir les détails du nouveau mannequin.</p>
 
-    <p class="text-center  mt-2">Veuillez remplir les détails du nouveau mannequin.</p>
-
-    <form action="{{ route('models.store') }}" method="POST" class="mt-8 space-y-6 required-password" enctype="multipart/form-data">
+    <form action="{{ route('models.store') }}" method="POST" class="mt-8 space-y-6" enctype="multipart/form-data">
         @csrf
 
-        <!-- current user id -->
+        <!-- Current user id -->
         <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
 
+        <!-- Première ligne : Nom, Email, Téléphone -->
         <div class="flex gap-4 flex-col sm:flex-row">
-
-            <!-- Username Field -->
+            <!-- Username -->
             <div class="w-full sm:w-1/3">
                 <x-input-label for="username" :value="__('Nom du mannequin')" />
-                <x-text-input id="username" class="block mt-1 w-full  {{ $errors->has('username') ? '!border-error' : '' }}" type="text" name="username" required autofocus />
+                <x-text-input id="username"
+                              class="block mt-1 w-full {{ $errors->has('username') ? '!border-error' : '' }}"
+                              type="text"
+                              name="username"
+                              required autofocus />
                 <x-input-error :messages="$errors->get('username')" class="mt-2" />
-                <span class="username-error-message"></span>
             </div>
 
-            <!-- Email Field -->
+            <!-- Email -->
             <div class="w-full sm:w-1/3">
                 <x-input-label for="email" :value="__('Email')" />
-                <x-text-input id="email" class="block mt-1 w-full {{ $errors->has('email') ? '!border-error' : '' }}" type="email" name="email" required />
+                <x-text-input id="email"
+                              class="block mt-1 w-full {{ $errors->has('email') ? '!border-error' : '' }}"
+                              type="email"
+                              name="email"
+                              required />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                <span class="email-error-message"></span>
             </div>
 
-            <!-- Tel Field -->
+            <!-- Téléphone -->
             <div class="w-full sm:w-1/3">
                 <x-input-label for="tel" :value="__('Téléphone')" />
-                <x-text-input
-                    id="tel"
-                    class="block mt-1 w-full {{ $errors->has('tel') ? '!border-error' : '' }}"
-                    type="tel"
-                    name="tel"
-                    required
-                    pattern="\+?[0-9]{10,15}"
-                    inputmode="numeric"
-                    minlength="8"
-                    maxlength="15"
-                    :value="old('tel')" />
+                <x-text-input id="tel"
+                              class="block mt-1 w-full {{ $errors->has('tel') ? '!border-error' : '' }}"
+                              type="tel"
+                              name="tel"
+                              required
+                              pattern="\+?[0-9]{10,15}"
+                              inputmode="numeric"
+                              minlength="8"
+                              maxlength="15"
+                              :value="old('tel')" />
                 <x-input-error :messages="$errors->get('tel')" class="mt-2" />
-                <span class="tel-error-message"></span>
             </div>
         </div>
 
-        <div class="flex gap-4 flex-wrap sm:flex-nowrap justify-between">
-
-            <!-- Password Field -->
+        <!-- Deuxième ligne : Password, Sexe, Type -->
+        <div class="flex gap-4 flex-col sm:flex-row">
+            <!-- Password -->
             <div class="w-full sm:w-1/3 relative">
                 <x-input-label for="password" :value="__('Password')" />
                 <div class="relative">
-                    <x-text-input
-                        id="password"
-                        class="block mt-1 w-full pr-10  {{ $errors->has('password') ? 'border-error' : '' }}"
-                        type="password"
-                        name="password"
-                        required />
-                    <button
-                        type="button"
-                        class="absolute inset-y-0 right-0 pr-3 flex items-center  cursor-pointer password-toggle"
-                        data-password-input="password">
-                        <!-- Eye Icon (Password Hidden) -->
+                    <x-text-input id="password"
+                                  class="block mt-1 w-full pr-10 {{ $errors->has('password') ? '!border-error' : '' }}"
+                                  type="password"
+                                  name="password"
+                                  required />
+                    <button type="button"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer password-toggle"
+                            data-password-input="password">
+                        <!-- Eye Icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 eye-icon show">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        <!-- Eye-Slash Icon (Password Visible) -->
+                        <!-- Eye Slash Icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 eye-icon hide hidden">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
                         </svg>
                     </button>
                 </div>
                 <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                <span class="password-error-message"></span>
             </div>
 
-            <!-- Sexe Field -->
-            <div class="w-2/5 sm:w-1/3">
-                <x-input-label for="" :value="__('Sexe :')" />
+            <!-- Sexe -->
+            <div class="w-full sm:w-1/3">
+                <x-input-label :value="__('Sexe :')" />
                 <div class="options flex flex-wrap gap-4 mt-1">
                     <label for="femme" class="relative flex items-center justify-start gap-2 hover:bg-primary px-2 py-[.35rem] rounded-lg cursor-pointer border-2 border-transparent transition-all duration-300 has-[:checked]:bg-primary-dark has-[:checked]:border-main/50">
                         <input type="radio" id="femme" name="gender_identity" checked value="Femme" class="hidden peer/draft" />
@@ -93,6 +93,7 @@
                             {{ __('Féminin') }}
                         </span>
                     </label>
+
                     <label for="homme" class="relative flex items-center justify-start gap-2 hover:bg-primary px-2 py-[.35rem] rounded-lg cursor-pointer border-2 border-transparent transition-all duration-300 has-[:checked]:bg-primary-dark has-[:checked]:border-main/50">
                         <input type="radio" id="homme" name="gender_identity" value="Homme" class="hidden peer/draft" />
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="stroke-main w-4 opacity-0 transition-all duration-150 -translate-x-6 peer-checked/draft:opacity-100 peer-checked/draft:translate-x-0">
@@ -103,12 +104,11 @@
                         </span>
                     </label>
                 </div>
-                <x-input-error :messages="$errors->get('role')" class="mt-2" />
             </div>
 
-            <!-- Type Field -->
-            <div class="w-2/5 sm:w-1/3">
-                <x-input-label for="" :value="__('Type :')" />
+            <!-- Type -->
+            <div class="w-full sm:w-1/3">
+                <x-input-label :value="__('Type :')" />
                 <div class="options flex flex-wrap gap-4 mt-1">
                     <label for="Model" class="relative flex items-center justify-start gap-2 hover:bg-primary px-2 py-[.35rem] rounded-lg cursor-pointer border-2 border-transparent transition-all duration-300 has-[:checked]:bg-primary-dark has-[:checked]:border-main/50">
                         <input type="radio" id="Model" name="model_type" checked value="Model" class="hidden peer/draft" />
@@ -119,6 +119,7 @@
                             {{ __('Model') }}
                         </span>
                     </label>
+
                     <label for="Mannequin" class="relative flex items-center justify-start gap-2 hover:bg-primary px-2 py-[.35rem] rounded-lg cursor-pointer border-2 border-transparent transition-all duration-300 has-[:checked]:bg-primary-dark has-[:checked]:border-main/50">
                         <input type="radio" id="Mannequin" name="model_type" value="Mannequin" class="hidden peer/draft" />
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="stroke-main w-4 opacity-0 transition-all duration-150 -translate-x-6 peer-checked/draft:opacity-100 peer-checked/draft:translate-x-0">
@@ -129,114 +130,146 @@
                         </span>
                     </label>
                 </div>
-                <x-input-error :messages="$errors->get('role')" class="mt-2" />
             </div>
         </div>
 
+        <!-- Troisième ligne : Langues, Couleur cheveux, Couleur yeux -->
         <div class="flex gap-4 flex-col sm:flex-row">
-
-            <!-- Languages -->
             <div class="w-full sm:w-1/3">
                 <x-input-label for="langues_parlees" :value="__('Langues parlées')" />
                 <x-text-input id="langues_parlees" required class="block mt-1 w-full" type="text" name="langues_parlees" />
             </div>
-
-            <!-- Hair color -->
             <div class="w-full sm:w-1/3">
                 <x-input-label for="couleur_cheveux" :value="__('Couleur des cheveux')" />
                 <x-text-input id="couleur_cheveux" required class="block mt-1 w-full" type="text" name="couleur_cheveux" />
             </div>
-
-            <!-- Eye color -->
             <div class="w-full sm:w-1/3">
                 <x-input-label for="couleur_yeux" :value="__('Couleur des yeux')" />
                 <x-text-input id="couleur_yeux" required class="block mt-1 w-full" type="text" name="couleur_yeux" />
             </div>
         </div>
 
-        <!-- Extra -->
-        <div class="flex gap-4 flex-col sm:flex-row flex-wrap">
-
-    <!-- Sport pratiqué + Piercings -->
-    <div class="flex gap-4 w-full">
-        <div class="w-full sm:w-1/2">
-            <x-input-label for="sport_pratique" :value="__('Sport pratiqué')" />
-            <x-text-input
-                id="sport_pratique"
-                class="block mt-1 w-full"
-                type="text"
-                name="sport_pratique"
-                placeholder="Ex: Football, Natation..."
-                :value="old('sport_pratique')" />
+        <!-- Sport pratiqué, Piercings, Tatouages → Même ligne -->
+        <div class="flex gap-4 flex-col sm:flex-row">
+            <div class="w-full sm:w-1/3">
+                <x-input-label for="sport_pratique" :value="__('Sport pratiqué')" />
+                <x-text-input id="sport_pratique" class="block mt-1 w-full" type="text" name="sport_pratique" placeholder="Ex: Football, Natation..." :value="old('sport_pratique')" />
+            </div>
+            <div class="w-full sm:w-1/3">
+                <x-input-label for="piercings" :value="__('Piercings')" />
+                <x-text-input id="piercings" class="block mt-1 w-full" type="text" name="piercings" placeholder="Ex: Oreilles, Nez, Nombril..." :value="old('piercings')" />
+            </div>
+            <div class="w-full sm:w-1/3">
+                <x-input-label for="tatouages" :value="__('Tatouages')" />
+                <x-text-input id="tatouages" class="block mt-1 w-full" type="text" name="tatouages" placeholder="Ex: Bras droit, Dos, Cheville..." :value="old('tatouages')" />
+            </div>
         </div>
 
-        <div class="w-full sm:w-1/2">
-            <x-input-label for="piercings" :value="__('Piercings')" />
-            <x-text-input
-                id="piercings"
-                class="block mt-1 w-full"
-                type="text"
-                name="piercings"
-                placeholder="Ex: Oreilles, Nez, Nombril..."
-                :value="old('piercings')" />
-        </div>
-    </div>
+        <!-- Finition de peau, Sous-ton, Niveau → Même ligne -->
+        <div class="flex gap-4 flex-col sm:flex-row">
+            <!-- Finition de peau -->
+            <div class="w-full sm:w-1/3">
+                <x-input-label for="finition_peau" :value="__('Finition de peau')" />
+                <select id="finition_peau" name="finition_peau" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm {{ $errors->has('finition_peau') ? '!border-error' : '' }}">
+                    <option value="" disabled {{ old('finition_peau') ? '' : 'selected' }}>-- Choisir --</option>
+                    <option value="Mate" {{ old('finition_peau') == 'Mate' ? 'selected' : '' }}>Mate</option>
+                    <option value="Lumineuse" {{ old('finition_peau') == 'Lumineuse' ? 'selected' : '' }}>Lumineuse</option>
+                    <option value="Sèche" {{ old('finition_peau') == 'Sèche' ? 'selected' : '' }}>Sèche</option>
+                    <option value="Grasse" {{ old('finition_peau') == 'Grasse' ? 'selected' : '' }}>Grasse</option>
+                </select>
+                <x-input-error :messages="$errors->get('finition_peau')" class="mt-2" />
+            </div>
 
-    <!-- Tatouages + Instagram -->
-    <div class="flex gap-4 w-full">
-        <div class="w-full sm:w-1/2">
-            <x-input-label for="tatouages" :value="__('Tatouages')" />
-            <x-text-input
-                id="tatouages"
-                class="block mt-1 w-full"
-                type="text"
-                name="tatouages"
-                placeholder="Ex: Bras droit, Dos, Cheville..."
-                :value="old('tatouages')" />
+            <!-- Sous-ton -->
+            <div class="w-full sm:w-1/3">
+                <x-input-label for="sous_ton" :value="__('Sous-ton')" />
+                <select id="sous_ton" name="sous_ton" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm {{ $errors->has('sous_ton') ? '!border-error' : '' }}">
+                    <option value="" disabled {{ old('sous_ton') ? '' : 'selected' }}>-- Choisir --</option>
+                    <option value="Froid" {{ old('sous_ton') == 'Froid' ? 'selected' : '' }}>Froid</option>
+                    <option value="Chaud" {{ old('sous_ton') == 'Chaud' ? 'selected' : '' }}>Chaud</option>
+                    <option value="Neutre" {{ old('sous_ton') == 'Neutre' ? 'selected' : '' }}>Neutre</option>
+                </select>
+                <x-input-error :messages="$errors->get('sous_ton')" class="mt-2" />
+            </div>
+
+            <!-- Niveau -->
+            <div class="w-full sm:w-1/3">
+                <x-input-label for="niveau" :value="__('Niveau')" />
+                <select id="niveau" name="niveau" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm {{ $errors->has('niveau') ? '!border-error' : '' }}">
+                    <option value="" disabled {{ old('niveau') ? '' : 'selected' }}>-- Choisir --</option>
+                    @foreach(range(1, 10) as $n)
+                        <option value="{{ $n }}" {{ old('niveau') == $n ? 'selected' : '' }}>{{ $n }}</option>
+                    @endforeach
+                    <option value="Hors-catégorie" {{ old('niveau') == 'Hors-catégorie' ? 'selected' : '' }}>Hors-catégorie</option>
+                </select>
+                <x-input-error :messages="$errors->get('niveau')" class="mt-2" />
+            </div>
         </div>
 
-        <div class="w-full sm:w-1/2">
-            <x-input-label for="instagram_link" :value="__('Lien Instagram')" />
-            <x-text-input
-                id="instagram_link"
-                class="block mt-1 w-full"
-                type="url"
-                name="instagram_link"
-                :value="old('instagram_link')" />
-        </div>
-    </div>
+        <!-- Émotions, Catégorie, Lien Instagram → Même ligne -->
+        <div class="flex gap-4 flex-col sm:flex-row">
+            <!-- Émotions -->
+            <div class="w-full sm:w-1/3">
+                <x-input-label for="emotions" :value="__('Émotions')" />
+                <select id="emotions" name="emotions" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm {{ $errors->has('emotions') ? '!border-error' : '' }}">
+                    <option value="" disabled {{ old('emotions') ? '' : 'selected' }}>-- Choisir --</option>
+                    <option value="Autorité" {{ old('emotions') == 'Autorité' ? 'selected' : '' }}>Autorité</option>
+                    <option value="Sensualité" {{ old('emotions') == 'Sensualité' ? 'selected' : '' }}>Sensualité</option>
+                    <option value="Glamour" {{ old('emotions') == 'Glamour' ? 'selected' : '' }}>Glamour</option>
+                    <option value="Anticode" {{ old('emotions') == 'Anticode' ? 'selected' : '' }}>Anticode</option>
+                    <option value="Opulence" {{ old('emotions') == 'Opulence' ? 'selected' : '' }}>Opulence</option>
+                </select>
+                <x-input-error :messages="$errors->get('emotions')" class="mt-2" />
+            </div>
 
+            <!-- Catégorie -->
+            <div class="w-full sm:w-1/3">
+                <x-input-label for="categorie" :value="__('Catégorie')" />
+                <select id="categorie" name="categorie" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm {{ $errors->has('categorie') ? '!border-error' : '' }}">
+                    <option value="" disabled {{ old('categorie') ? '' : 'selected' }}>-- Choisir --</option>
+                    <option value="Beauté" {{ old('categorie') == 'Beauté' ? 'selected' : '' }}>Beauté</option>
+                    <option value="Commercial" {{ old('categorie') == 'Commercial' ? 'selected' : '' }}>Commercial</option>
+                    <option value="Défilé" {{ old('categorie') == 'Défilé' ? 'selected' : '' }}>Défilé</option>
+                    <option value="Photo shoot puissant" {{ old('categorie') == 'Photo shoot puissant' ? 'selected' : '' }}>Photo shoot puissant</option>
+                </select>
+                <x-input-error :messages="$errors->get('categorie')" class="mt-2" />
+            </div>
+
+            <!-- Lien Instagram -->
+            <div class="w-full sm:w-1/3">
+                <x-input-label for="instagram_link" :value="__('Lien Instagram')" />
+                <x-text-input id="instagram_link"
+                              class="block mt-1 w-full"
+                              type="url"
+                              name="instagram_link"
+                              :value="old('instagram_link')" />
+            </div>
         </div>
 
-         <!-- Disponibilité -->
+        <!-- Disponibilité -->
         <div class="mb-4">
-            <h3 class="text-lg font-medium mb-2">Disponibilité</h3> <!-- titre ajouté -->
-
+            <h3 class="text-lg font-medium mb-2">Disponibilité</h3>
             <div class="flex gap-4 flex-col sm:flex-row">
-                <!-- Date début -->
                 <div class="w-full sm:w-1/2">
-                    <x-text-input
-                        id="date_debut"
-                        class="block mt-1 w-full {{ $errors->has('disponibilite_debut') ? '!border-error' : '' }}"
-                        type="date"
-                        name="disponibilite_debut"
-                        required />
+                    <x-text-input id="date_debut"
+                                  class="block mt-1 w-full {{ $errors->has('disponibilite_debut') ? '!border-error' : '' }}"
+                                  type="date"
+                                  name="disponibilite_debut"
+                                  required />
                     <x-input-error :messages="$errors->get('disponibilite_debut')" class="mt-2" />
                 </div>
-
-                <!-- Date fin -->
                 <div class="w-full sm:w-1/2">
-                    <x-text-input
-                        id="date_fin"
-                        class="block mt-1 w-full {{ $errors->has('disponibilite_fin') ? '!border-error' : '' }}"
-                        type="date"
-                        name="disponibilite_fin"
-                        required />
+                    <x-text-input id="date_fin"
+                                  class="block mt-1 w-full {{ $errors->has('disponibilite_fin') ? '!border-error' : '' }}"
+                                  type="date"
+                                  name="disponibilite_fin"
+                                  required />
                     <x-input-error :messages="$errors->get('disponibilite_fin')" class="mt-2" />
                 </div>
             </div>
         </div>
-        <!-- Profile and indentity -->
+
+        <!-- Profile and identity -->
         <div class="flex gap-6 flex-col sm:flex-row">
             <div class="hidden bg-main/50"></div>
 

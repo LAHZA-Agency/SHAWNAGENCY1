@@ -1,6 +1,4 @@
-@php
 
-@endphp
 <nav x-data="{ open: false }" class="bg-primary border-b border-c-border absolute inset-0 z-[999] h-min">
     <!-- primary-100 Navigation Menu -->
     <div class="w-full px-4">
@@ -17,7 +15,7 @@
 
             <div class="flex justify-end gap-2 items-center whitespace-nowrap max-w-full w-full pl-16">
 
-               
+
 
 
                 <!-- Dark Mode toggle switch -->
@@ -35,7 +33,7 @@
                         <span class="sr-only">Switch to light / dark version</span>
                     </label>
                 </div>
- 
+
                 @auth
                 @if (Auth::user()->role == "Candidate")
                 <div class="">
